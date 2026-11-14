@@ -29,9 +29,6 @@
     })(document);
   </script>
 
-  <!-- VAST Client for parsing MagSrv ad tags -->
-  <script src="https://cdn.jsdelivr.net/npm/@dailymotion/vast-client@3.3.0/dist/vast-client-browser.min.js"></script>
-
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FV0H0442XN"></script>
   <script>
@@ -273,7 +270,7 @@
       border: 0;
     }
 
-    /* ---- Native advertisement ---- */
+    /* ---- Non-interstitial banner advertisements ---- */
     .native-ad {
       width: 100%;
       max-width: 960px;
@@ -290,13 +287,22 @@
       border-radius: 9px;
     }
 
+    .ad-label {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
     .native-ad #container-157006280add51d8b97e81116eeb2b9b {
       width: 100%;
       max-width: 100%;
       text-align: center;
     }
 
-    /* Keep the Bauval banner inside this visible ad slot. */
+    /* Keep each banner inside its visible ad slot. */
     .bauval-ad-slot {
       display: flex;
       justify-content: center;
@@ -307,7 +313,7 @@
       overflow: hidden;
     }
 
-    /* Prevent the ad tag's generated banner from floating outside the slot. */
+    /* Prevent the ad tag's generated banner from floating outside its slot. */
     .bauval-ad-slot > *,
     .bauval-ad-slot iframe {
       position: static !important;
@@ -794,139 +800,6 @@
       margin-top: 16px;
     }
 
-    /* ---- Pre-roll Video Ad Overlay ---- */
-    .preroll-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 90;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.95);
-      animation: fade .25s ease-out;
-    }
-
-    .preroll-card {
-      position: relative;
-      width: min(900px, 100%);
-      background: #000;
-      border-radius: 9px;
-      overflow: hidden;
-      box-shadow: 0 18px 48px rgba(0,0,0,.5);
-    }
-
-    .preroll-video-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-    }
-
-    .preroll-video {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: contain;
-      background: #000;
-    }
-
-    .preroll-label {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 3;
-      padding: 4px 12px;
-      background: rgba(0,0,0,.65);
-      color: #fff;
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      border-radius: 4px;
-      pointer-events: none;
-    }
-
-    .preroll-skip-btn {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      z-index: 3;
-      padding: 10px 18px;
-      background: rgba(0,0,0,.75);
-      color: #fff;
-      border: 2px solid rgba(255,255,255,.4);
-      border-radius: 6px;
-      font: 700 .95rem var(--body);
-      cursor: pointer;
-      transition: background .15s, border-color .15s;
-    }
-
-    .preroll-skip-btn:hover:not(:disabled) {
-      background: rgba(0,0,0,.9);
-      border-color: #fff;
-    }
-
-    .preroll-skip-btn:disabled {
-      cursor: default;
-      opacity: .85;
-    }
-
-    .preroll-skip-btn .count {
-      color: #ffd84d;
-      font-family: var(--display);
-    }
-
-    .preroll-loading {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 600;
-      background: #000;
-    }
-
-    .preroll-loading-spinner {
-      width: 40px;
-      height: 40px;
-      margin-right: 12px;
-      border: 3px solid rgba(255,255,255,.2);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    .preroll-click-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      cursor: pointer;
-      background: transparent;
-    }
-
-    .preroll-unmute {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      z-index: 3;
-      width: 44px;
-      height: 44px;
-      background: rgba(0,0,0,.75);
-      color: #fff;
-      border: 2px solid rgba(255,255,255,.4);
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
-    .preroll-unmute:hover {
-      background: rgba(0,0,0,.9);
-      border-color: #fff;
-    }
-
     @keyframes fade {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -935,10 +808,6 @@
     @keyframes pop {
       from { opacity: 0; transform: scale(.8) translateY(20px); }
       to { opacity: 1; transform: none; }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
 
     @media (max-width: 560px) {
@@ -996,7 +865,6 @@
 
         <a href="allgames.html" class="btn btn--alt">&larr; All games</a>
         <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
-        <a class="btn btn--alt" id="direct-play-btn" hidden>Direct Play</a>
         <button type="button" class="btn" id="fs-btn">Fullscreen</button>
         <button type="button" class="btn btn--pink is-cta" id="auth-toggle">Sign in</button>
       </div>
@@ -1017,36 +885,6 @@
       <button type="button" class="banner-close" id="banner-close" aria-label="Hide this reminder">&times;</button>
     </div>
 
-    <!-- Pre-roll video ad overlay -->
-    <div class="preroll-overlay" id="preroll-overlay" hidden>
-      <div class="preroll-card" role="dialog" aria-modal="true" aria-label="Advertisement">
-        <div class="preroll-video-wrap">
-          <span class="preroll-label">Ad</span>
-
-          <video
-            id="preroll-video"
-            class="preroll-video"
-            playsinline
-            webkit-playsinline
-            muted
-            preload="auto"></video>
-
-          <div class="preroll-click-overlay" id="preroll-click-overlay" hidden></div>
-
-          <div class="preroll-loading" id="preroll-loading">
-            <div class="preroll-loading-spinner"></div>
-            <span>Loading ad...</span>
-          </div>
-
-          <button type="button" class="preroll-unmute" id="preroll-unmute" aria-label="Unmute" hidden>🔇</button>
-
-          <button type="button" class="preroll-skip-btn" id="preroll-skip" disabled>
-            Skip in <span class="count" id="preroll-count">10</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- Active game -->
     <div class="game-container" id="game-container">
       <iframe
@@ -1057,12 +895,12 @@
         allowfullscreen></iframe>
     </div>
 
-    <!-- Native banner advertisement -->
-    <div class="native-ad" aria-label="Advertisement">
+    <!-- Banner advertisement 1 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
       <div id="container-157006280add51d8b97e81116eeb2b9b"></div>
 
-      <!-- Bauval banner tag is inside the visible ad slot, not at the end of the page. -->
-      <div class="bauval-ad-slot" id="bauval-ad-slot">
+      <div class="bauval-ad-slot">
         <script>
           atOptions = {
             'key' : '049d96f182d4f5c7d51cfce79bd22181',
@@ -1072,7 +910,7 @@
             'params' : {}
           };
         </script>
-        <script src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+        <script async src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
       </div>
     </div>
 
@@ -1088,6 +926,23 @@
       <h1 class="game-title" id="game-title">Loading...</h1>
     </div>
 
+    <!-- Banner advertisement 2 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="bauval-ad-slot">
+        <script>
+          atOptions = {
+            'key' : '049d96f182d4f5c7d51cfce79bd22181',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+        <script async src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+      </div>
+    </div>
+
     <p class="error-msg" id="error-msg" hidden>
       No game selected. <a href="allgames.html">Pick one from the hub</a>.
     </p>
@@ -1099,11 +954,45 @@
       <div class="game-grid" id="game-grid"></div>
     </section>
 
+    <!-- Banner advertisement 3 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="bauval-ad-slot">
+        <script>
+          atOptions = {
+            'key' : '049d96f182d4f5c7d51cfce79bd22181',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+        <script async src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+      </div>
+    </div>
+
     <section class="play-help" aria-labelledby="play-help-title">
       <h2 id="play-help-title">Having trouble getting started?</h2>
       <p>Wait for the game's opening screen and look there for controls or a tutorial. Controls are set by each game, so keyboard and touch support can differ. The fullscreen button enlarges the play area; it does not change how a game is controlled.</p>
       <p>If the play area stays blank, check your connection and try reloading the page once. Some titles are hosted by third parties and may occasionally be unavailable. Visit the <a href="game-guide.html">game guide</a> for tips on several titles, or return to <a href="allgames.html">all games</a> to choose another.</p>
     </section>
+
+    <!-- Banner advertisement 4 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="bauval-ad-slot">
+        <script>
+          atOptions = {
+            'key' : '049d96f182d4f5c7d51cfce79bd22181',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+        <script async src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+      </div>
+    </div>
 
     <footer class="footer">
       <p>Need another game? <a href="allgames.html">Browse the activity library</a>. Edusphere Academy is fictional, not a real school or university.</p>
@@ -1305,266 +1194,13 @@
       return Math.floor(minutes / 60) + "h " + (minutes % 60) + "m";
     }
 
-    /* ---- Pre-roll Ad Config ---- */
-    const PREROLL_CONFIG = {
-      vastUrl: 'https://s.magsrv.com/v1/vast.php?idz=6090188',
-      skipAfterSeconds: 10,
-      maxLoadSeconds: 8,
-      maxAdDuration: 45,
-      oncePerSession: true
-    };
-
-    const PREROLL_SHOWN_KEY = 'preroll-shown-session';
-
-    function wasPrerollShownThisSession() {
-      if (!PREROLL_CONFIG.oncePerSession) return false;
-      try {
-        const shown = JSON.parse(sessionStorage.getItem(PREROLL_SHOWN_KEY) || '[]');
-        return Array.isArray(shown) && shown.includes(gameId);
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function markPrerollShown() {
-      try {
-        const shown = JSON.parse(sessionStorage.getItem(PREROLL_SHOWN_KEY) || '[]');
-        const list = Array.isArray(shown) ? shown : [];
-        if (!list.includes(gameId)) list.push(gameId);
-        sessionStorage.setItem(PREROLL_SHOWN_KEY, JSON.stringify(list));
-      } catch (e) {}
-    }
-
-    function firePixel(url) {
-      if (!url) return;
-      try {
-        const img = new Image();
-        img.src = url;
-      } catch (e) {}
-    }
-
-    function fireTrackingEvents(trackers) {
-      if (!trackers) return;
-      (Array.isArray(trackers) ? trackers : []).forEach(firePixel);
-    }
-
-    function showPreroll(onFinish) {
-      const overlay = document.getElementById('preroll-overlay');
-      const video = document.getElementById('preroll-video');
-      const skipBtn = document.getElementById('preroll-skip');
-      const countEl = document.getElementById('preroll-count');
-      const loading = document.getElementById('preroll-loading');
-      const clickOverlay = document.getElementById('preroll-click-overlay');
-      const unmuteBtn = document.getElementById('preroll-unmute');
-      const directPlayBtn = document.getElementById('direct-play-btn');
-
-      directPlayBtn.hidden = true;
-      overlay.hidden = false;
-
-      let finished = false;
-      let skipEnabled = false;
-      let secondsLeft = PREROLL_CONFIG.skipAfterSeconds;
-      let countdownInterval = null;
-      let adTrackers = {
-        impression: [],
-        firstQuartile: [],
-        midpoint: [],
-        thirdQuartile: [],
-        complete: [],
-        clickTracking: [],
-        clickThrough: null
-      };
-      let firedEvents = {
-        impression: false,
-        firstQuartile: false,
-        midpoint: false,
-        thirdQuartile: false,
-        complete: false
-      };
-
-      function enableSkip() {
-        if (skipEnabled) return;
-        skipEnabled = true;
-        skipBtn.disabled = false;
-        skipBtn.innerHTML = 'Skip Ad ▶';
-      }
-
-      function finish() {
-        if (finished) return;
-        finished = true;
-        if (countdownInterval) clearInterval(countdownInterval);
-        try { video.pause(); } catch(e) {}
-        video.removeAttribute('src');
-        video.load();
-        overlay.hidden = true;
-        markPrerollShown();
-        if (directPlayBtn.dataset.url) directPlayBtn.hidden = false;
-        if (typeof onFinish === 'function') onFinish();
-      }
-
-      function startCountdown() {
-        countEl.textContent = secondsLeft;
-        countdownInterval = setInterval(() => {
-          secondsLeft--;
-          countEl.textContent = Math.max(0, secondsLeft);
-          if (secondsLeft <= 0) {
-            clearInterval(countdownInterval);
-            enableSkip();
-          }
-        }, 1000);
-      }
-
-      function fallbackSkipAndContinue() {
-        console.warn('Pre-roll: fallback triggered, skipping ad.');
-        finish();
-      }
-
-      skipBtn.addEventListener('click', () => {
-        if (skipEnabled) finish();
-      });
-
-      if (!window.VAST || !window.VAST.VASTClient) {
-        console.warn('VAST client library not available');
-        fallbackSkipAndContinue();
-        return;
-      }
-
-      const vastClient = new window.VAST.VASTClient();
-
-      const loadTimeout = setTimeout(() => {
-        if (!video.src) fallbackSkipAndContinue();
-      }, PREROLL_CONFIG.maxLoadSeconds * 1000);
-
-      vastClient.get(PREROLL_CONFIG.vastUrl, { withCredentials: false, timeout: 7000 })
-        .then((response) => {
-          clearTimeout(loadTimeout);
-
-          const ad = response && response.ads && response.ads[0];
-          if (!ad) throw new Error('No ad in VAST response');
-
-          const creative = ad.creatives.find(c => c.type === 'linear');
-          if (!creative || !creative.mediaFiles || !creative.mediaFiles.length) {
-            throw new Error('No linear creative found');
-          }
-
-          const mp4Files = creative.mediaFiles.filter(m => /mp4/i.test(m.mimeType || ''));
-          const files = mp4Files.length ? mp4Files : creative.mediaFiles;
-          files.sort((a, b) => (a.bitrate || 0) - (b.bitrate || 0));
-          const mediaFile = files[Math.floor(files.length / 2)] || files[0];
-
-          if (!mediaFile || !mediaFile.fileURL) {
-            throw new Error('No playable media file URL');
-          }
-
-          const tracking = creative.trackingEvents || {};
-          adTrackers.impression = ad.impressionURLTemplates
-            ? ad.impressionURLTemplates.map(t => t.url || t)
-            : [];
-          adTrackers.firstQuartile = (tracking.firstQuartile || []).map(t => t.url || t);
-          adTrackers.midpoint = (tracking.midpoint || []).map(t => t.url || t);
-          adTrackers.thirdQuartile = (tracking.thirdQuartile || []).map(t => t.url || t);
-          adTrackers.complete = (tracking.complete || []).map(t => t.url || t);
-
-          if (creative.videoClickTrackingURLTemplates) {
-            adTrackers.clickTracking = creative.videoClickTrackingURLTemplates.map(t => t.url || t);
-          }
-          if (creative.videoClickThroughURLTemplate) {
-            adTrackers.clickThrough = creative.videoClickThroughURLTemplate.url || creative.videoClickThroughURLTemplate;
-          }
-
-          if (adTrackers.clickThrough) {
-            clickOverlay.hidden = false;
-            clickOverlay.addEventListener('click', (e) => {
-              e.preventDefault();
-              fireTrackingEvents(adTrackers.clickTracking);
-              window.open(adTrackers.clickThrough, '_blank', 'noopener');
-            });
-          }
-
-          video.src = mediaFile.fileURL;
-          video.muted = true;
-          unmuteBtn.hidden = false;
-          unmuteBtn.textContent = '🔇';
-
-          unmuteBtn.addEventListener('click', () => {
-            video.muted = !video.muted;
-            unmuteBtn.textContent = video.muted ? '🔇' : '🔊';
-            unmuteBtn.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
-          });
-
-          video.addEventListener('loadeddata', () => {
-            loading.style.display = 'none';
-          });
-
-          video.addEventListener('playing', () => {
-            loading.style.display = 'none';
-            if (!firedEvents.impression) {
-              firedEvents.impression = true;
-              fireTrackingEvents(adTrackers.impression);
-            }
-            if (!countdownInterval) startCountdown();
-          });
-
-          video.addEventListener('timeupdate', () => {
-            if (!video.duration) return;
-            const pct = video.currentTime / video.duration;
-
-            if (pct >= 0.25 && !firedEvents.firstQuartile) {
-              firedEvents.firstQuartile = true;
-              fireTrackingEvents(adTrackers.firstQuartile);
-            }
-            if (pct >= 0.5 && !firedEvents.midpoint) {
-              firedEvents.midpoint = true;
-              fireTrackingEvents(adTrackers.midpoint);
-            }
-            if (pct >= 0.75 && !firedEvents.thirdQuartile) {
-              firedEvents.thirdQuartile = true;
-              fireTrackingEvents(adTrackers.thirdQuartile);
-            }
-
-            if (video.currentTime >= PREROLL_CONFIG.maxAdDuration) {
-              enableSkip();
-            }
-          });
-
-          video.addEventListener('ended', () => {
-            if (!firedEvents.complete) {
-              firedEvents.complete = true;
-              fireTrackingEvents(adTrackers.complete);
-            }
-            enableSkip();
-            setTimeout(finish, 800);
-          });
-
-          video.addEventListener('error', (e) => {
-            console.warn('Pre-roll video error:', e);
-            fallbackSkipAndContinue();
-          });
-
-          const playPromise = video.play();
-          if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch((err) => {
-              console.warn('Pre-roll autoplay blocked:', err);
-              video.muted = true;
-              video.play().catch(() => fallbackSkipAndContinue());
-            });
-          }
-        })
-        .catch((err) => {
-          clearTimeout(loadTimeout);
-          console.warn('Pre-roll VAST load failed:', err);
-          fallbackSkipAndContinue();
-        });
-    }
-
-    /* ---- Load game (with pre-roll) ---- */
-    function loadGameWithPreroll() {
+    /* ---- Load game directly ---- */
+    function loadGame() {
       const heading = document.getElementById("game-title");
       const container = document.getElementById("game-container");
       const titleBlock = document.getElementById("title-block");
       const errorMsg = document.getElementById("error-msg");
       const frame = document.getElementById("game-frame");
-      const directPlayButton = document.getElementById("direct-play-btn");
 
       if (!isValidId) {
         container.hidden = true;
@@ -1579,20 +1215,9 @@
       heading.textContent = gameTitle;
       document.title = gameTitle + " | Edusphere Academy";
       frame.title = gameTitle;
+      frame.src = gameUrl;
 
-      directPlayButton.dataset.url = gameUrl;
-      directPlayButton.href = gameUrl;
-
-      if (wasPrerollShownThisSession()) {
-        frame.src = gameUrl;
-        directPlayButton.hidden = false;
-        trackCurrentGame();
-      } else {
-        showPreroll(() => {
-          frame.src = gameUrl;
-          trackCurrentGame();
-        });
-      }
+      trackCurrentGame();
     }
 
     /* ---- Recommendations ---- */
@@ -1685,7 +1310,7 @@
     }
 
     /* ---- Init ---- */
-    loadGameWithPreroll();
+    loadGame();
     renderRecommendations();
     setupFullscreen();
   </script>
