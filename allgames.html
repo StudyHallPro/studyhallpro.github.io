@@ -152,6 +152,29 @@ l.parentNode.insertBefore(s, l);
     }
     .ad-slot > * { max-width: 100%; }
 
+    /* Responsive banner inventory: insert your ad network's banner tag in this slot. */
+    .banner-ad-section { margin: 0 0 28px; text-align: center; }
+    .banner-ad-slot {
+      width: 100%; min-height: 90px; display: flex; align-items: center;
+      justify-content: center; overflow: hidden; padding: 8px;
+      background: var(--panel); border: 1px dashed var(--line);
+      border-radius: var(--radius);
+    }
+    .banner-ad-slot iframe, .banner-ad-slot img { max-width: 100%; }
+    .rectangle-ad-section { margin: 0 0 40px; text-align: center; }
+    .rectangle-ad-slot {
+      min-height: 250px; display: flex; align-items: center;
+      justify-content: center; overflow: hidden;
+    }
+    .rectangle-ad-slot iframe {
+      display: block; width: 300px; height: 250px; max-width: 100%;
+      border: 0; background: transparent;
+    }
+    .ad-label {
+      margin: 0 0 6px; color: var(--muted); font-size: .72rem;
+      letter-spacing: .12em; text-transform: uppercase;
+    }
+
     .modules-header { margin-bottom: 20px; }
     .modules-header h2 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 1.8rem; }
     .section-lead { margin: 4px 0 0; color: var(--muted); }
@@ -396,9 +419,36 @@ l.parentNode.insertBefore(s, l);
         </div>
       </header>
 
+      <!-- Responsive leaderboard/banner placement.
+           Paste your ad provider's banner code inside #banner-ad-slot when you have it. -->
+      <section class="banner-ad-section" aria-label="Advertisement">
+        <p class="ad-label">Advertisement</p>
+        <div class="banner-ad-slot" id="banner-ad-slot">
+          <!-- BANNER AD CODE GOES HERE -->
+          <span class="section-lead">Banner advertisement space</span>
+        </div>
+      </section>
+
       <section class="dashboard-welcome">
         <p class="welcome-title" id="welcome-title">Activity library</p>
         <p id="welcome-text">Browse free browser games and activities. Edusphere Academy is a fictional theme, not a real school or university.</p>
+      </section>
+
+      <!-- 300x250 display ad placement -->
+      <section class="rectangle-ad-section" aria-label="Advertisement">
+        <p class="ad-label">Advertisement</p>
+        <div class="rectangle-ad-slot">
+          <iframe
+            src="https://aidzap.com/ad/b92680f2-8d3a-4daa-a260-d41b01f81ffa"
+            width="300"
+            height="250"
+            scrolling="no"
+            frameborder="0"
+            title="Advertisement"
+            loading="lazy"
+            style="border:none">
+          </iframe>
+        </div>
       </section>
 
       <!-- HilltopAds banner section (just for the banner ad) -->
