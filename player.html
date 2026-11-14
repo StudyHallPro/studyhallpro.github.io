@@ -249,6 +249,56 @@
 
     .banner-close:hover { color: var(--text); }
 
+    /* ---- Top banner ad stack (all banners load before the game) ---- */
+    .top-banner-ads {
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-banner-ads .native-ad {
+      width: 100%;
+      max-width: 960px;
+      min-height: 0;
+      margin: 0;
+      padding: 8px;
+    }
+
+    .top-banner-ads .bauval-ad-slot {
+      width: 100%;
+      max-width: 100%;
+      min-height: 50px;
+      overflow: hidden;
+    }
+
+    .top-banner-ads .bauval-ad-slot iframe {
+      display: block;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      border: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .page {
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+      }
+
+      .top-banner-ads {
+        margin-bottom: 12px;
+        gap: 8px;
+      }
+
+      .top-banner-ads .native-ad {
+        padding: 5px;
+      }
+    }
+
     /* ---- Game container ---- */
     .game-container {
       position: relative;
@@ -870,6 +920,79 @@
       </div>
     </div>
 
+    <!-- All banner ads grouped at the top for iPad/tablet viewports -->
+    <section class="top-banner-ads" aria-label="Advertisements">
+
+
+      <!-- Banner advertisement 1 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="bauval-ad-slot">
+        <script>
+          atOptions = {
+            'key' : '049d96f182d4f5c7d51cfce79bd22181',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+        <script async src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+      </div>
+    </div>
+
+      <!-- Banner advertisement 2 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="bauval-ad-slot">
+       <script>
+  atOptions = {
+    'key' : 'a63315b56070b2858b3ebf1bf5e5b2ba',
+    'format' : 'iframe',
+    'height' : 60,
+    'width' : 468,
+    'params' : {}
+  };
+</script>
+<script src="https://bauval.org/22/a63315b56070b2858b3ebf1bf5e5b2ba"></script>
+      </div>
+    </div>
+
+      <!-- Banner advertisement 3 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="bauval-ad-slot">
+        <script>
+  atOptions = {
+    'key' : 'c43a82f1398b372a09d693ec41c5182b',
+    'format' : 'iframe',
+    'height' : 90,
+    'width' : 728,
+    'params' : {}
+  };
+</script>
+<script src="https://bauval.org/22/c43a82f1398b372a09d693ec41c5182b"></script>
+      </div>
+    </div>
+
+      <!-- Banner advertisement 4 -->
+    <div class="native-ad" role="complementary" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="bauval-ad-slot">
+        <script>
+  atOptions = {
+    'key' : '5b4efe045f4ae78dd30e7fc61e81e871',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://bauval.org/22/5b4efe045f4ae78dd30e7fc61e81e871"></script>
+      </div>
+    </div>
+    </section>
+
     <!-- Sign-in reminder -->
     <div class="signin-banner" id="signin-banner" role="region" aria-label="Save your progress" hidden>
       <p>
@@ -895,23 +1018,6 @@
         allowfullscreen></iframe>
     </div>
 
-    <!-- Banner advertisement 1 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-        <script>
-          atOptions = {
-            'key' : '049d96f182d4f5c7d51cfce79bd22181',
-            'format' : 'iframe',
-            'height' : 50,
-            'width' : 320,
-            'params' : {}
-          };
-        </script>
-        <script async src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
-      </div>
-    </div>
-
     <div class="game-request">
       <a class="btn" href="https://forms.gle/W6cyVPrhp5Yd99nB8" target="_blank" rel="noopener noreferrer">
         Enjoying The Game Request Your Own
@@ -922,23 +1028,6 @@
     <div class="title-block" id="title-block">
       <p class="eyebrow">Now playing</p>
       <h1 class="game-title" id="game-title">Loading...</h1>
-    </div>
-
-    <!-- Banner advertisement 2 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-       <script>
-  atOptions = {
-    'key' : 'a63315b56070b2858b3ebf1bf5e5b2ba',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/a63315b56070b2858b3ebf1bf5e5b2ba"></script>
-      </div>
     </div>
 
     <p class="error-msg" id="error-msg" hidden>
@@ -952,45 +1041,11 @@
       <div class="game-grid" id="game-grid"></div>
     </section>
 
-    <!-- Banner advertisement 3 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-        <script>
-  atOptions = {
-    'key' : 'c43a82f1398b372a09d693ec41c5182b',
-    'format' : 'iframe',
-    'height' : 90,
-    'width' : 728,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/c43a82f1398b372a09d693ec41c5182b"></script>
-      </div>
-    </div>
-
     <section class="play-help" aria-labelledby="play-help-title">
       <h2 id="play-help-title">Having trouble getting started?</h2>
       <p>Wait for the game's opening screen and look there for controls or a tutorial. Controls are set by each game, so keyboard and touch support can differ. The fullscreen button enlarges the play area; it does not change how a game is controlled.</p>
       <p>If the play area stays blank, check your connection and try reloading the page once. Some titles are hosted by third parties and may occasionally be unavailable. Visit the <a href="game-guide.html">game guide</a> for tips on several titles, or return to <a href="allgames.html">all games</a> to choose another.</p>
     </section>
-
-    <!-- Banner advertisement 4 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-        <script>
-  atOptions = {
-    'key' : '5b4efe045f4ae78dd30e7fc61e81e871',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/5b4efe045f4ae78dd30e7fc61e81e871"></script>
-      </div>
-    </div>
 
     <footer class="footer">
       <p>Need another game? <a href="allgames.html">Browse the activity library</a>. Edusphere Academy is fictional, not a real school or university.</p>
