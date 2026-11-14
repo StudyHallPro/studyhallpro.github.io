@@ -6,6 +6,7 @@
   <meta name="description" content="Play a free browser game from Edusphere Academy's fictional activity collection.">
   <meta name="theme-color" content="#f5f4ed">
   <title>Loading game... | Edusphere Academy</title>
+
   <!-- Ad script 2 (periodic-teacher pop script)
        >>> PASTE YOUR LONG <script>(function(options){ ... })({...})</script> BLOCK HERE <<<
        Copy it exactly as it is in your current player.html. -->
@@ -13,14 +14,10 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4353830713556880"
      crossorigin="anonymous"></script>
 
-  <!-- WGPlayer universal ad tag
-       The old line built "https://wgplayer.com" + hostname, which has no path and no "?",
-       so it requested a bad URL. Paste the real script URL from your WGPlayer dashboard
-       into WGPLAYER_BASE below (everything up to and including the "=" that comes before
-       the hostname). Until it is filled in, nothing is requested. -->
+  <!-- WGPlayer universal ad tag -->
   <script type="text/javascript">
     (function (d) {
-      var WGPLAYER_BASE = ""; // e.g. "https://wgplayer.com/<path-from-dashboard>?domain="
+      var WGPLAYER_BASE = "";
       if (!WGPLAYER_BASE) return;
 
       var s = d.createElement("script");
@@ -32,7 +29,7 @@
     })(document);
   </script>
 
-  <!-- Google Analytics (same as the hub) -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FV0H0442XN"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -47,7 +44,6 @@
   <script src="theme.js"></script>
 
   <style>
-    /* ---- Theme tokens (shared with the game hub) ---- */
     :root {
       --bg: #f5f4ed;
       --bg-deep: #f5f4ed;
@@ -97,6 +93,7 @@
       max-width: 960px;
       margin: 0 auto 22px;
     }
+
     .brand {
       display: flex;
       align-items: center;
@@ -104,6 +101,7 @@
       color: var(--text);
       text-decoration: none;
     }
+
     .brand-mark {
       display: grid;
       place-items: center;
@@ -115,12 +113,20 @@
       background: var(--sun);
       border-radius: 7px;
     }
+
     .brand-text {
       font-family: var(--display);
       font-size: 1.1rem;
       letter-spacing: .02em;
     }
-    .topbar-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
 
     /* ---- Signed-in user chip ---- */
     .user-chip {
@@ -136,7 +142,9 @@
       font: inherit;
       cursor: pointer;
     }
+
     .user-chip:hover { border-color: var(--sun); }
+
     .avatar {
       display: grid;
       place-items: center;
@@ -149,6 +157,7 @@
       color: var(--bg-deep);
       background: var(--cyan);
     }
+
     .user-chip-name {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -157,21 +166,21 @@
       font-weight: 600;
     }
 
-    /* ---- Buttons (same look as the hub's yellow buttons) ---- */
+    /* ---- Buttons ---- */
     .btn {
       display: inline-block;
       padding: 10px 16px;
       border: 0;
-      border-radius: 12px;
+      border-radius: 7px;
       cursor: pointer;
       font: 700 .95rem var(--body);
       text-align: center;
       text-decoration: none;
       color: #fffefa;
       background: var(--sun);
-      border-radius: 7px;
       transition: background .15s;
     }
+
     .btn:hover { background: #28523f; }
     .btn:active { transform: none; }
     .btn--alt { background: var(--cyan); }
@@ -182,6 +191,7 @@
     .btn--pink:active { transform: none; }
     .btn--pink.is-cta { animation: none; }
     .btn:disabled { opacity: .6; cursor: wait; }
+
     @keyframes ctaPulse {
       0% { outline: 0 solid rgba(255,79,154,.6); }
       70% { outline: 10px solid rgba(255,79,154,0); }
@@ -203,9 +213,25 @@
       border: 1px solid var(--line);
       border-left: 4px solid var(--pink);
     }
-    .signin-banner p { flex: 1 1 260px; margin: 0; color: var(--muted); }
-    .signin-banner strong { display: block; color: var(--text); font-size: 1.1rem; }
-    .signin-banner-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .signin-banner p {
+      flex: 1 1 260px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .signin-banner strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.1rem;
+    }
+
+    .signin-banner-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
     .banner-close {
       position: absolute;
       top: 8px;
@@ -220,9 +246,10 @@
       line-height: 1;
       cursor: pointer;
     }
+
     .banner-close:hover { color: var(--text); }
 
-    /* ---- Game container: max 960px, 16:9 ---- */
+    /* ---- Game container ---- */
     .game-container {
       position: relative;
       width: 100%;
@@ -235,12 +262,36 @@
       box-shadow: 0 14px 36px rgba(36,53,47,.14);
       overflow: hidden;
     }
+
     .game-container iframe {
       display: block;
       width: 100%;
       height: 100%;
       border: 0;
     }
+
+    /* ---- Native advertisement ---- */
+    .native-ad {
+      width: 100%;
+      max-width: 960px;
+      min-height: 100px;
+      margin: 22px auto 0;
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+    }
+
+    .native-ad #container-157006280add51d8b97e81116eeb2b9b {
+      width: 100%;
+      max-width: 100%;
+      text-align: center;
+    }
+
     .game-request {
       max-width: 960px;
       margin: 18px auto 0;
@@ -248,8 +299,17 @@
     }
 
     /* ---- Title ---- */
-    .title-block { max-width: 960px; margin: 34px auto 0; }
-    .eyebrow { margin: 0 0 4px; color: var(--muted); font-size: .9rem; }
+    .title-block {
+      max-width: 960px;
+      margin: 34px auto 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
     .game-title {
       margin: 0;
       font-family: var(--display);
@@ -262,20 +322,29 @@
     }
 
     /* ---- More Games ---- */
-    .more-games { max-width: 960px; margin: 48px auto 0; }
+    .more-games {
+      max-width: 960px;
+      margin: 48px auto 0;
+    }
+
     .more-games h2 {
       margin: 0 0 4px;
       font-family: var(--display);
       font-weight: 400;
       font-size: 1.8rem;
     }
-    .section-lead { margin: 0 0 20px; color: var(--muted); }
+
+    .section-lead {
+      margin: 0 0 20px;
+      color: var(--muted);
+    }
 
     .game-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
       gap: 18px;
     }
+
     .game-card {
       --accent: var(--cyan);
       display: flex;
@@ -288,7 +357,12 @@
       box-shadow: 0 4px 14px rgba(36,53,47,.07);
       transition: border-color .15s, box-shadow .15s;
     }
-    .game-card:hover { border-color: var(--accent); box-shadow: 0 8px 22px rgba(36,53,47,.12); }
+
+    .game-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 22px rgba(36,53,47,.12);
+    }
+
     .game-card:active { transform: none; }
     .game-card:nth-child(4n+1) { --accent: var(--cyan); }
     .game-card:nth-child(4n+2) { --accent: var(--pink); }
@@ -301,18 +375,21 @@
       background: var(--panel-hi);
       border-bottom: 2px solid var(--line);
     }
+
     .game-card-thumb img {
       display: block;
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
+
     .game-card-body {
       display: flex;
       flex-direction: column;
       gap: 8px;
       padding: 12px 14px 14px;
     }
+
     .game-card-tag {
       align-self: flex-start;
       padding: 2px 10px;
@@ -323,6 +400,7 @@
       background: var(--accent);
       text-transform: capitalize;
     }
+
     .game-card-name {
       margin: 0;
       font-family: var(--display);
@@ -352,7 +430,14 @@
       border-radius: var(--radius);
       line-height: 1.6;
     }
-    .play-help h2 { margin: 0 0 8px; color: var(--text); font-family: var(--display); font-size: 1.35rem; }
+
+    .play-help h2 {
+      margin: 0 0 8px;
+      color: var(--text);
+      font-family: var(--display);
+      font-size: 1.35rem;
+    }
+
     .play-help p { margin: 8px 0; }
 
     .footer {
@@ -364,42 +449,148 @@
       font-size: .9rem;
     }
 
-    /* ---- Authentication popup (same look as the hub) ---- */
+    /* ---- Authentication popup ---- */
     .auth-overlay {
-      position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px;
-      background: rgba(36,53,47,.38); backdrop-filter: blur(6px); animation: fade .25s ease-out;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(36,53,47,.38);
+      backdrop-filter: blur(6px);
+      animation: fade .25s ease-out;
     }
+
     .auth-modal {
-      position: relative; width: min(460px,100%); padding: 40px 32px 32px; text-align: left;
-      background: var(--panel); border: 1px solid var(--line);
-      border-radius: 9px; box-shadow: 0 18px 48px rgba(36,53,47,.22);
+      position: relative;
+      width: min(460px,100%);
+      padding: 40px 32px 32px;
+      text-align: left;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      box-shadow: 0 18px 48px rgba(36,53,47,.22);
       animation: pop .4s cubic-bezier(.2,1.4,.4,1);
     }
+
     .auth-burst {
-      position: absolute; top: -32px; left: 50%; transform: translateX(-50%); display: grid;
-      place-items: center; width: 64px; height: 64px; font-size: 2rem; background: var(--pink);
-      border: 3px solid var(--sun); border-radius: 50%;
+      position: absolute;
+      top: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      font-size: 2rem;
+      background: var(--pink);
+      border: 3px solid var(--sun);
+      border-radius: 50%;
     }
-    .auth-modal h2 { margin: 0 0 14px; text-align: center; font-family: var(--display); font-weight: 600; font-size: 1.7rem; color: var(--text); }
-    .auth-field { display: block; margin-bottom: 14px; }
-    .auth-field span { display: block; margin-bottom: 4px; color: var(--muted); font-size: .9rem; font-weight: 600; }
-    .auth-field input { width: 100%; padding: 12px 14px; font: 500 1rem var(--body); color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; }
-    .auth-status { min-height: 1.4em; margin: 0 0 14px; font-size: .92rem; color: var(--muted); }
+
+    .auth-modal h2 {
+      margin: 0 0 14px;
+      text-align: center;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 1.7rem;
+      color: var(--text);
+    }
+
+    .auth-field {
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .auth-field span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 600;
+    }
+
+    .auth-field input {
+      width: 100%;
+      padding: 12px 14px;
+      font: 500 1rem var(--body);
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+    }
+
+    .auth-status {
+      min-height: 1.4em;
+      margin: 0 0 14px;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
     .auth-status.is-error { color: #a33b2f; }
     .auth-status.is-ok { color: var(--sun); }
-    .auth-submit { width: 100%; padding: 12px 22px; font-size: 1rem; }
-    .auth-links { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 14px; margin-top: 18px; }
-    .auth-link { padding: 0; border: 0; background: none; color: var(--cyan); font: 600 .9rem var(--body); cursor: pointer; text-decoration: underline; }
-    .auth-close { position: absolute; top: 12px; right: 14px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 1.4rem; line-height: 1; cursor: pointer; }
+
+    .auth-submit {
+      width: 100%;
+      padding: 12px 22px;
+      font-size: 1rem;
+    }
+
+    .auth-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 6px 14px;
+      margin-top: 18px;
+    }
+
+    .auth-link {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--cyan);
+      font: 600 .9rem var(--body);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .auth-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: none;
+      color: var(--muted);
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
     .auth-close:hover { color: var(--text); }
+
     .auth-pass { position: relative; }
     .auth-pass input { padding-right: 76px; }
+
     .auth-eye {
-      position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 6px 10px;
-      border: 0; border-radius: 8px; cursor: pointer; background: var(--panel-hi);
-      color: var(--cyan); font: 700 .8rem var(--body);
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 10px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--panel-hi);
+      color: var(--cyan);
+      font: 700 .8rem var(--body);
     }
+
     .auth-eye:hover { color: var(--text); }
+
     .account-overlay {
       position: fixed;
       inset: 0;
@@ -409,10 +600,12 @@
       background: rgba(36,53,47,.4);
       backdrop-filter: blur(12px);
     }
+
     .account-dialog {
       width: min(900px, 100%);
       margin: 0 auto;
     }
+
     .account-card {
       position: relative;
       overflow: hidden;
@@ -422,6 +615,7 @@
       background: var(--surface);
       box-shadow: 0 18px 48px rgba(36,53,47,.22);
     }
+
     .account-close {
       position: absolute;
       top: 16px;
@@ -435,12 +629,14 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
+
     .account-heading {
       display: flex;
       align-items: center;
       gap: 22px;
       padding-right: 38px;
     }
+
     .account-avatar {
       display: grid;
       place-items: center;
@@ -452,15 +648,24 @@
       background: var(--sun);
       font: 600 1.7rem var(--display);
     }
+
     .account-heading h2 {
       margin: 0 0 4px;
       font: 600 clamp(1.35rem, 4vw, 2rem) var(--display);
       color: var(--text);
     }
+
     .account-heading h2 span { color: var(--sun); }
     .account-subtitle, .account-email { margin: 0; color: var(--muted); }
     .account-subtitle strong { color: var(--text); }
-    .account-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+
+    .account-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
     .account-stat {
       display: inline-flex;
       align-items: center;
@@ -473,6 +678,7 @@
       background: var(--panel-hi);
       font-weight: 700;
     }
+
     .account-games-panel {
       margin-top: 26px;
       padding: 20px;
@@ -480,18 +686,26 @@
       border-radius: 8px;
       background: var(--panel);
     }
-    .account-games-panel h3 { margin: 0 0 14px; color: var(--text); font-size: 1rem; }
+
+    .account-games-panel h3 {
+      margin: 0 0 14px;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
     .account-games {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px 24px;
     }
+
     .account-game {
       display: flex;
       min-width: 0;
       align-items: center;
       gap: 10px;
     }
+
     .account-game img, .account-game-icon {
       display: grid;
       place-items: center;
@@ -504,11 +718,36 @@
       background: var(--panel-hi);
       object-fit: cover;
     }
+
     .account-game-info { min-width: 0; flex: 1; }
-    .account-game-name { display: block; overflow: hidden; color: var(--text); font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-    .account-game-time { color: var(--muted); font-size: .82rem; white-space: nowrap; }
-    .account-empty { grid-column: 1 / -1; margin: 0; color: var(--muted); }
-    .account-more { margin: 12px 0 0; color: var(--muted); font-size: .9rem; }
+
+    .account-game-name {
+      display: block;
+      overflow: hidden;
+      color: var(--text);
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .account-game-time {
+      color: var(--muted);
+      font-size: .82rem;
+      white-space: nowrap;
+    }
+
+    .account-empty {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .account-more {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
     .account-device {
       margin: 24px 0 0;
       padding: 16px 18px;
@@ -517,24 +756,59 @@
       color: var(--muted);
       background: var(--panel-hi);
     }
+
     .account-device strong { color: var(--text); }
-    .account-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
-    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes pop { from { opacity: 0; transform: scale(.8) translateY(20px); } to { opacity: 1; transform: none; } }
+
+    .account-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: scale(.8) translateY(20px); }
+      to { opacity: 1; transform: none; }
+    }
 
     @media (max-width: 560px) {
       .brand-text { display: none; }
       .user-chip-name { display: none; }
       .user-chip { padding: 4px; }
-      .game-container { border-radius: 8px; box-shadow: 0 8px 24px rgba(36,53,47,.14); }
-      .account-heading { align-items: flex-start; flex-direction: column; gap: 15px; }
+
+      .game-container {
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(36,53,47,.14);
+      }
+
+      .native-ad {
+        margin-top: 16px;
+        padding: 8px;
+      }
+
+      .account-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+      }
+
       .account-games { grid-template-columns: 1fr; }
       .account-games-panel { padding: 15px; }
     }
+
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
+
   <link rel="stylesheet" href="theme.css">
 </head>
 
@@ -547,11 +821,13 @@
         <span class="brand-mark" aria-hidden="true">EA</span>
         <span class="brand-text">Edusphere Academy</span>
       </a>
+
       <div class="topbar-actions">
         <button type="button" class="user-chip" id="user-chip" aria-label="Open account details" hidden>
           <span class="avatar" id="user-avatar" aria-hidden="true">?</span>
           <span class="user-chip-name" id="user-name"></span>
         </button>
+
         <a href="allgames.html" class="btn btn--alt">&larr; All games</a>
         <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
         <a class="btn btn--alt" id="direct-play-btn" hidden>Direct Play</a>
@@ -560,23 +836,22 @@
       </div>
     </div>
 
-    <!-- Sign in / sign up reminder (only shown to signed-out players) -->
+    <!-- Sign-in reminder -->
     <div class="signin-banner" id="signin-banner" role="region" aria-label="Save your progress" hidden>
       <p>
         <strong>Don't lose your progress!</strong>
         Sign in or create a free account to save this game and pick it up on any device.
       </p>
+
       <div class="signin-banner-actions">
         <button type="button" class="btn btn--pink" id="banner-signin">Sign in</button>
         <button type="button" class="btn btn--alt" id="banner-signup">Create account</button>
       </div>
+
       <button type="button" class="banner-close" id="banner-close" aria-label="Hide this reminder">&times;</button>
     </div>
 
-    <!-- Active game
-         The sandbox attribute is what stops a game's own "frame-buster" script
-         (top.location = self.location) from redirecting the whole tab.
-         "allow-top-navigation" is deliberately NOT included. -->
+    <!-- Active game -->
     <div class="game-container" id="game-container">
       <iframe
         id="game-frame"
@@ -586,8 +861,15 @@
         allowfullscreen></iframe>
     </div>
 
+    <!-- Native banner advertisement -->
+    <div class="native-ad" aria-label="Advertisement">
+      <div id="container-157006280add51d8b97e81116eeb2b9b"></div>
+    </div>
+
     <div class="game-request">
-      <a class="btn" href="https://forms.gle/W6cyVPrhp5Yd99nB8" target="_blank" rel="noopener noreferrer">Enjoying The Game Request Your Own</a>
+      <a class="btn" href="https://forms.gle/W6cyVPrhp5Yd99nB8" target="_blank" rel="noopener noreferrer">
+        Enjoying The Game Request Your Own
+      </a>
     </div>
 
     <!-- Title -->
@@ -625,24 +907,32 @@
     <section class="account-dialog" role="dialog" aria-modal="true" aria-labelledby="account-title">
       <div class="account-card">
         <button type="button" class="account-close" id="account-close" aria-label="Close account details">&times;</button>
+
         <div class="account-heading">
           <div class="account-avatar" id="account-avatar" aria-hidden="true">CB</div>
+
           <div>
             <h2 id="account-title">Your <span>account</span></h2>
             <p class="account-subtitle" id="account-name"></p>
             <p class="account-email" id="account-email"></p>
+
             <div class="account-stats">
               <span class="account-stat"><span aria-hidden="true">🎮</span><span id="account-game-count">0 games</span></span>
               <span class="account-stat"><span aria-hidden="true">◷</span><span id="account-play-time">0m played</span></span>
             </div>
           </div>
         </div>
+
         <section class="account-games-panel" aria-labelledby="account-games-title">
           <h3 id="account-games-title">Games you've played</h3>
           <div class="account-games" id="account-games"></div>
           <p class="account-more" id="account-more" hidden></p>
         </section>
-        <p class="account-device"><strong>On this device:</strong> your play history is stored in this browser. Game progress syncs to your account when supported by the game.</p>
+
+        <p class="account-device">
+          <strong>On this device:</strong> your play history is stored in this browser. Game progress syncs to your account when supported by the game.
+        </p>
+
         <div class="account-actions">
           <button type="button" class="btn btn--pink" id="account-signout">Sign out</button>
         </div>
@@ -655,12 +945,15 @@
     <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
       <div class="auth-burst" aria-hidden="true">🔐</div>
       <button type="button" class="auth-close" id="auth-close" aria-label="Close">&times;</button>
+
       <h2 id="auth-title">Sign in</h2>
+
       <form id="auth-form" novalidate>
         <label class="auth-field" id="auth-email-wrap">
           <span>Email</span>
           <input type="email" id="auth-email" autocomplete="email" required>
         </label>
+
         <label class="auth-field" id="auth-password-wrap">
           <span id="auth-password-label">Password</span>
           <div class="auth-pass">
@@ -668,9 +961,11 @@
             <button type="button" class="auth-eye" id="auth-eye" aria-label="Show password" aria-pressed="false">Show</button>
           </div>
         </label>
+
         <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
         <button type="submit" class="btn auth-submit" id="auth-submit">Sign in</button>
       </form>
+
       <div class="auth-links">
         <button type="button" class="auth-link" id="auth-switch"></button>
         <button type="button" class="auth-link" id="auth-forgot">Forgot password?</button>
@@ -678,27 +973,15 @@
     </div>
   </div>
 
-  <!-- Provides GAME_MODULES and getGameId(). Its card renderer does nothing on
-       this page because there is no #module-grid element. -->
+  <!-- Game catalog -->
   <script src="script.js"></script>
 
   <script>
-    /* ==========================================================================
-       GAME CATALOG
-       Built automatically from GAME_MODULES in script.js. Each entry has:
-         id    - folder name inside /games/
-         title - display name
-         thumb - thumbnail path
-         cat   - category label shown on the card
-       Only games stored at games/[id]/ are included, because those are the
-       ones this player can load as /games/[id]/index.html.
-       ========================================================================== */
     const GAME_CATALOG = GAME_MODULES
       .map((m) => {
         const id = getGameId(m.href);
         if (!id) return null;
 
-        // Make relative thumbnail paths root-relative; leave full URLs alone.
         const thumb = /^(https?:)?\/\//.test(m.img) || m.img.startsWith("/")
           ? m.img
           : "/" + m.img;
@@ -707,22 +990,15 @@
       })
       .filter(Boolean);
 
-    // How many suggestions to show (random pick each visit). Use 0 to show all.
     const MAX_SUGGESTIONS = 24;
 
-    /* ==========================================================================
-       READ URL PARAMETERS
-       Expected: player.html?game=drive-mad&title=Drive+Mad
-       ========================================================================== */
+    /* ---- Read URL parameters ---- */
     const params = new URLSearchParams(window.location.search);
     const gameId = (params.get("game") || "").trim();
     let gameTitle = (params.get("title") || "").trim();
 
-    // Only allow safe folder names (letters, digits, space, _ . -) and no ".."
-    // so the parameter can't be used to load files outside /games/.
     const isValidId = /^[\w. -]+$/.test(gameId) && !gameId.includes("..");
 
-    // If no title was passed, fall back to the catalog entry, then to the id.
     if (!gameTitle && isValidId) {
       const match = GAME_CATALOG.find((g) => g.id === gameId);
       gameTitle = match ? match.title : gameId;
@@ -734,6 +1010,7 @@
       try {
         const history = JSON.parse(localStorage.getItem(PLAY_HISTORY_KEY) || "[]");
         if (!Array.isArray(history)) throw new TypeError("Play history is not a list.");
+
         return history.filter((game) =>
           game && typeof game.id === "string" &&
           typeof game.title === "string" &&
@@ -759,33 +1036,51 @@
 
       const history = getPlayHistory();
       let entry = history.find((game) => game.id === gameId);
+
       if (!entry) {
-        entry = { id: gameId, title: gameTitle, seconds: 0, lastPlayed: Date.now() };
+        entry = {
+          id: gameId,
+          title: gameTitle,
+          seconds: 0,
+          lastPlayed: Date.now()
+        };
         history.push(entry);
       } else {
         entry.title = gameTitle;
         entry.lastPlayed = Date.now();
       }
+
       savePlayHistory(history.slice(-100));
 
       let lastTick = Date.now();
       let wasVisible = !document.hidden;
+
       const updateTime = () => {
         const now = Date.now();
+
         if (wasVisible) {
           const currentHistory = getPlayHistory();
           let currentEntry = currentHistory.find((game) => game.id === gameId);
+
           if (!currentEntry) {
-            currentEntry = { id: gameId, title: gameTitle, seconds: 0, lastPlayed: now };
+            currentEntry = {
+              id: gameId,
+              title: gameTitle,
+              seconds: 0,
+              lastPlayed: now
+            };
             currentHistory.push(currentEntry);
           }
+
           currentEntry.seconds += Math.max(0, Math.floor((now - lastTick) / 1000));
           currentEntry.lastPlayed = now;
           savePlayHistory(currentHistory.slice(-100));
         }
+
         lastTick = now;
         wasVisible = !document.hidden;
       };
+
       window.setInterval(updateTime, 15000);
       document.addEventListener("visibilitychange", updateTime);
       window.addEventListener("pagehide", updateTime, { once: true });
@@ -793,15 +1088,14 @@
 
     function formatPlayTime(seconds) {
       const minutes = Math.floor(seconds / 60);
+
       if (minutes < 1) return "<1m";
       if (minutes < 60) return minutes + "m";
+
       return Math.floor(minutes / 60) + "h " + (minutes % 60) + "m";
     }
 
-    /* ========================================================================== 
-       LOAD THE GAME + UPDATE TITLES
-       Validates the id, sets the titles, and loads the game straight away.
-       ========================================================================== */
+    /* ---- Load game ---- */
     function loadGame() {
       const heading = document.getElementById("game-title");
       const container = document.getElementById("game-container");
@@ -820,38 +1114,36 @@
 
       const gameUrl = "/games/" + encodeURIComponent(gameId) + "/index.html";
 
-      // textContent (not innerHTML) so the title param can't inject markup
       heading.textContent = gameTitle;
       document.title = gameTitle + " | Edusphere Academy";
 
-      // Point the iframe at /games/[game-id]/index.html
       frame.src = gameUrl;
       frame.title = gameTitle;
+
       directPlayButton.href = gameUrl;
       directPlayButton.hidden = false;
+
       trackCurrentGame();
     }
 
-    /* ==========================================================================
-       "MORE GAMES" GRID
-       Loops through the catalog, skips the game being played, and builds a
-       card linking back into player.html.
-       ========================================================================== */
+    /* ---- Recommendations ---- */
     function shuffle(list) {
       const a = list.slice();
+
       for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
       }
+
       return a;
     }
 
     function renderRecommendations() {
       const grid = document.getElementById("game-grid");
       const section = document.getElementById("more-games");
+
       grid.innerHTML = "";
 
-      // Filter out the currently playing game
       let others = GAME_CATALOG.filter((g) => g.id !== gameId);
 
       if (!others.length) {
@@ -866,19 +1158,26 @@
       others.forEach((game) => {
         const link = document.createElement("a");
         link.className = "game-card";
-        // Result: player.html?game=target-id&title=Target+Title
-        link.href = "player.html?" + new URLSearchParams({ game: game.id, title: game.title }).toString();
+
+        link.href = "player.html?" +
+          new URLSearchParams({
+            game: game.id,
+            title: game.title
+          }).toString();
 
         const thumbWrap = document.createElement("div");
         thumbWrap.className = "game-card-thumb";
+
         const img = document.createElement("img");
         img.src = game.thumb;
         img.alt = game.title;
         img.loading = "lazy";
+
         img.onerror = function () {
           thumbWrap.style.background = "#eeefe7";
           img.remove();
         };
+
         thumbWrap.appendChild(img);
 
         const body = document.createElement("div");
@@ -894,15 +1193,15 @@
 
         body.appendChild(tag);
         body.appendChild(name);
+
         link.appendChild(thumbWrap);
         link.appendChild(body);
+
         grid.appendChild(link);
       });
     }
 
-    /* ==========================================================================
-       FULLSCREEN BUTTON
-       ========================================================================== */
+    /* ---- Fullscreen ---- */
     function setupFullscreen() {
       const btn = document.getElementById("fs-btn");
       const container = document.getElementById("game-container");
@@ -916,29 +1215,25 @@
       });
     }
 
-    /* ==========================================================================
-       INIT
-       ========================================================================== */
+    /* ---- Init ---- */
     loadGame();
     renderRecommendations();
     setupFullscreen();
   </script>
 
-  <!-- Supabase email/password authentication (same project as the hub) -->
+  <!-- Supabase authentication -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
   <script>
     const SUPA_URL = "https://yerxoikcfeulgnrdjkyc.supabase.co";
     const SUPA_KEY = "sb_publishable_QX-XZw_wiRj_u0NXHGRkOA_Pq7rGK-p";
 
-    // Where the "reset password" email link sends people (the hub handles the
-    // new-password step). Add this URL to Supabase > Authentication > URL Configuration.
     const RESET_REDIRECT = new URL("allgames.html", location.href).href;
-
-    // Remembers that the player closed the reminder banner for this browser session.
     const BANNER_KEY = "player-signin-banner-dismissed";
 
     function setupAuth() {
       const $ = (id) => document.getElementById(id);
+
       const overlay = $("auth-overlay");
       const form = $("auth-form");
       const statusEl = $("auth-status");
@@ -959,12 +1254,16 @@
 
       let mode = "signin";
       let user = null;
-      let authKnown = false;   // true once we know whether someone is signed in
+      let authKnown = false;
       let lastFocus = null;
       let accountLastFocus = null;
 
       function bannerDismissed() {
-        try { return sessionStorage.getItem(BANNER_KEY) === "1"; } catch (e) { return false; }
+        try {
+          return sessionStorage.getItem(BANNER_KEY) === "1";
+        } catch (e) {
+          return false;
+        }
       }
 
       function say(text, kind) {
@@ -974,12 +1273,14 @@
 
       function setMode(m) {
         mode = m;
+
         const titles = {
           signin: "Sign in",
           signup: "Create account",
           reset: "Reset password",
           newpass: "Choose a new password"
         };
+
         const buttons = {
           signin: "Sign in",
           signup: "Create account",
@@ -989,34 +1290,51 @@
 
         $("auth-title").textContent = titles[m];
         submitBtn.textContent = buttons[m];
+
         $("auth-email-wrap").hidden = (m === "newpass");
         $("auth-password-wrap").hidden = (m === "reset");
-        $("auth-password-label").textContent = (m === "newpass") ? "New password" : "Password";
-        passEl.autocomplete = (m === "signin") ? "current-password" : "new-password";
+
+        $("auth-password-label").textContent =
+          (m === "newpass") ? "New password" : "Password";
+
+        passEl.autocomplete =
+          (m === "signin") ? "current-password" : "new-password";
+
         emailEl.required = (m !== "newpass");
         passEl.required = (m !== "reset");
         passEl.minLength = (m === "reset") ? 0 : 6;
-        switchBtn.textContent = (m === "signin") ? "Create an account" : "Back to sign in";
+
+        switchBtn.textContent =
+          (m === "signin") ? "Create an account" : "Back to sign in";
+
         forgotBtn.hidden = (m !== "signin");
         switchBtn.hidden = (m === "newpass");
+
         say("");
       }
 
       function setPassVisible(show) {
         passEl.type = show ? "text" : "password";
         eyeBtn.textContent = show ? "Hide" : "Show";
-        eyeBtn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+        eyeBtn.setAttribute(
+          "aria-label",
+          show ? "Hide password" : "Show password"
+        );
         eyeBtn.setAttribute("aria-pressed", String(show));
       }
 
-      eyeBtn.addEventListener("click", () => setPassVisible(passEl.type === "password"));
+      eyeBtn.addEventListener("click", () => {
+        setPassVisible(passEl.type === "password");
+      });
 
       function open(m) {
         lastFocus = document.activeElement;
         setMode(m || "signin");
         overlay.hidden = false;
 
-        if (!sb) say("Login could not load. Check your connection and reload.", "error");
+        if (!sb) {
+          say("Login could not load. Check your connection and reload.", "error");
+        }
 
         (m === "newpass" ? passEl : emailEl).focus();
       }
@@ -1025,42 +1343,79 @@
         overlay.hidden = true;
         form.reset();
         setPassVisible(false);
-        if (lastFocus && lastFocus.focus) lastFocus.focus();
+
+        if (lastFocus && lastFocus.focus) {
+          lastFocus.focus();
+        }
       }
 
       function renderAccount() {
         const email = user && user.email ? user.email : "";
         const metadata = user && user.user_metadata ? user.user_metadata : {};
-        const name = metadata.full_name || metadata.name || (email ? email.split("@")[0] : "Player");
-        const initials = name.trim().split(/\s+/).slice(0, 2).map((part) => part.charAt(0)).join("").toUpperCase();
-        const history = getPlayHistory().sort((a, b) => b.lastPlayed - a.lastPlayed);
-        const totalSeconds = history.reduce((total, game) => total + game.seconds, 0);
+
+        const name =
+          metadata.full_name ||
+          metadata.name ||
+          (email ? email.split("@")[0] : "Player");
+
+        const initials = name.trim()
+          .split(/\s+/)
+          .slice(0, 2)
+          .map((part) => part.charAt(0))
+          .join("")
+          .toUpperCase();
+
+        const history = getPlayHistory().sort(
+          (a, b) => b.lastPlayed - a.lastPlayed
+        );
+
+        const totalSeconds = history.reduce(
+          (total, game) => total + game.seconds,
+          0
+        );
 
         $("account-avatar").textContent = initials || "CB";
+
         const accountName = document.createElement("strong");
         accountName.textContent = name;
-        $("account-name").replaceChildren("Signed in as ", accountName);
+
+        $("account-name").replaceChildren(
+          "Signed in as ",
+          accountName
+        );
+
         $("account-email").textContent = email;
-        $("account-game-count").textContent = history.length + (history.length === 1 ? " game" : " games");
-        $("account-play-time").textContent = formatPlayTime(totalSeconds) + " played";
+
+        $("account-game-count").textContent =
+          history.length + (history.length === 1 ? " game" : " games");
+
+        $("account-play-time").textContent =
+          formatPlayTime(totalSeconds) + " played";
 
         const gameList = $("account-games");
         gameList.replaceChildren();
+
         history.slice(0, 10).forEach((played) => {
           const item = document.createElement("div");
           item.className = "account-game";
-          const game = GAME_CATALOG.find((entry) => entry.id === played.id);
+
+          const game = GAME_CATALOG.find(
+            (entry) => entry.id === played.id
+          );
+
           if (game) {
             const image = document.createElement("img");
             image.src = game.thumb;
             image.alt = "";
             image.loading = "lazy";
+
             image.onerror = () => {
               const fallback = document.createElement("span");
               fallback.className = "account-game-icon";
               fallback.textContent = played.title.charAt(0).toUpperCase();
               image.replaceWith(fallback);
             };
+
             item.appendChild(image);
           } else {
             const fallback = document.createElement("span");
@@ -1071,12 +1426,15 @@
 
           const info = document.createElement("span");
           info.className = "account-game-info";
+
           const title = document.createElement("span");
           title.className = "account-game-name";
           title.textContent = played.title;
+
           const time = document.createElement("span");
           time.className = "account-game-time";
           time.textContent = formatPlayTime(played.seconds);
+
           info.append(title, time);
           item.appendChild(info);
           gameList.appendChild(item);
@@ -1084,14 +1442,25 @@
 
         const empty = document.createElement("p");
         empty.className = "account-empty";
-        empty.textContent = history.length ? "" : "Games you play here will show up in this list.";
-        if (!history.length) gameList.appendChild(empty);
+        empty.textContent = history.length
+          ? ""
+          : "Games you play here will show up in this list.";
+
+        if (!history.length) {
+          gameList.appendChild(empty);
+        }
+
         $("account-more").hidden = history.length <= 10;
-        $("account-more").textContent = history.length > 10 ? "+ " + (history.length - 10) + " more" : "";
+
+        $("account-more").textContent =
+          history.length > 10
+            ? "+ " + (history.length - 10) + " more"
+            : "";
       }
 
       function openAccount() {
         if (!user) return;
+
         accountLastFocus = document.activeElement;
         renderAccount();
         accountOverlay.hidden = false;
@@ -1100,52 +1469,88 @@
 
       function closeAccount() {
         accountOverlay.hidden = true;
-        if (accountLastFocus && accountLastFocus.focus) accountLastFocus.focus();
+
+        if (accountLastFocus && accountLastFocus.focus) {
+          accountLastFocus.focus();
+        }
       }
 
-      // Updates the button, avatar chip and reminder banner for the current user.
       function renderUser(u) {
         user = u || null;
+
         const email = user && user.email;
-        const metadata = user && user.user_metadata ? user.user_metadata : {};
-        const name = metadata.full_name || metadata.name || (email ? email.split("@")[0] : "");
+        const metadata = user && user.user_metadata
+          ? user.user_metadata
+          : {};
+
+        const name =
+          metadata.full_name ||
+          metadata.name ||
+          (email ? email.split("@")[0] : "");
 
         chip.hidden = !user;
-        $("user-avatar").textContent = email ? email.slice(0, 2).toUpperCase() : "?";
+
+        $("user-avatar").textContent =
+          email ? email.slice(0, 2).toUpperCase() : "?";
+
         $("user-name").textContent = name;
-        chip.setAttribute("aria-label", user ? "Open account details for " + name : "Open account details");
-        if (!user) accountOverlay.hidden = true;
+
+        chip.setAttribute(
+          "aria-label",
+          user
+            ? "Open account details for " + name
+            : "Open account details"
+        );
+
+        if (!user) {
+          accountOverlay.hidden = true;
+        }
 
         toggleBtn.textContent = user ? "Sign out" : "Sign in";
         toggleBtn.classList.toggle("is-cta", !user);
 
-        // Only remind signed-out players, and only once we know they're signed out
-        banner.hidden = !(authKnown && !user && !bannerDismissed());
+        banner.hidden = !(
+          authKnown &&
+          !user &&
+          !bannerDismissed()
+        );
       }
 
-      // Reloads the game so its cloud save is restored for the account that just signed in.
       function reloadGame() {
         const frame = $("game-frame");
-        if (frame && frame.getAttribute("src")) frame.src = frame.getAttribute("src");
+
+        if (frame && frame.getAttribute("src")) {
+          frame.src = frame.getAttribute("src");
+        }
       }
 
       /* ---- Buttons ---- */
       toggleBtn.addEventListener("click", async () => {
-        if (!user) return open("signin");
+        if (!user) {
+          return open("signin");
+        }
+
         if (sb) {
           const { error } = await sb.auth.signOut();
+
           if (error) {
             console.error("Sign out failed:", error);
             return;
           }
         }
+
         renderUser(null);
       });
+
       chip.addEventListener("click", openAccount);
       accountClose.addEventListener("click", closeAccount);
+
       accountOverlay.addEventListener("click", (event) => {
-        if (event.target === accountOverlay) closeAccount();
+        if (event.target === accountOverlay) {
+          closeAccount();
+        }
       });
+
       $("account-signout").addEventListener("click", () => {
         closeAccount();
         toggleBtn.click();
@@ -1153,30 +1558,51 @@
 
       $("banner-signin").addEventListener("click", () => open("signin"));
       $("banner-signup").addEventListener("click", () => open("signup"));
+
       $("banner-close").addEventListener("click", () => {
-        try { sessionStorage.setItem(BANNER_KEY, "1"); } catch (e) {}
+        try {
+          sessionStorage.setItem(BANNER_KEY, "1");
+        } catch (e) {}
+
         banner.hidden = true;
       });
 
-      switchBtn.addEventListener("click", () => setMode(mode === "signin" ? "signup" : "signin"));
+      switchBtn.addEventListener("click", () => {
+        setMode(mode === "signin" ? "signup" : "signin");
+      });
+
       forgotBtn.addEventListener("click", () => setMode("reset"));
       $("auth-close").addEventListener("click", close);
-      overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) {
+          close();
+        }
+      });
+
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
-        if (!accountOverlay.hidden) closeAccount();
-        else if (!overlay.hidden) close();
+
+        if (!accountOverlay.hidden) {
+          closeAccount();
+        } else if (!overlay.hidden) {
+          close();
+        }
       });
 
       /* ---- Form submit ---- */
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
+
         if (!sb) return;
 
         const email = emailEl.value.trim();
         const password = passEl.value;
 
-        if (mode !== "newpass" && !email) return say("Enter your email address.", "error");
+        if (mode !== "newpass" && !email) {
+          return say("Enter your email address.", "error");
+        }
+
         if (mode !== "reset" && password.length < 6) {
           return say("Use a password with at least 6 characters.", "error");
         }
@@ -1186,30 +1612,56 @@
 
         try {
           if (mode === "signin") {
-            const { error } = await sb.auth.signInWithPassword({ email, password });
+            const { error } = await sb.auth.signInWithPassword({
+              email,
+              password
+            });
+
             if (error) throw error;
+
             close();
           } else if (mode === "signup") {
-            const { data, error } = await sb.auth.signUp({ email, password });
+            const { data, error } = await sb.auth.signUp({
+              email,
+              password
+            });
+
             if (error) throw error;
 
             if (data.session) {
               close();
             } else {
               setMode("signin");
-              say("Account created. Check your email to confirm it, then sign in.", "ok");
+              say(
+                "Account created. Check your email to confirm it, then sign in.",
+                "ok"
+              );
             }
           } else if (mode === "reset") {
-            const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: RESET_REDIRECT });
+            const { error } = await sb.auth.resetPasswordForEmail(email, {
+              redirectTo: RESET_REDIRECT
+            });
+
             if (error) throw error;
-            say("If that email has an account, a reset link is on its way.", "ok");
+
+            say(
+              "If that email has an account, a reset link is on its way.",
+              "ok"
+            );
           } else if (mode === "newpass") {
             const { error } = await sb.auth.updateUser({ password });
+
             if (error) throw error;
+
             close();
           }
         } catch (err) {
-          say(err && err.message ? err.message : "Something went wrong. Try again.", "error");
+          say(
+            err && err.message
+              ? err.message
+              : "Something went wrong. Try again.",
+            "error"
+          );
         } finally {
           submitBtn.disabled = false;
         }
@@ -1219,13 +1671,11 @@
       renderUser(null);
 
       if (!sb) {
-        // Login library didn't load: still show the reminder so the button explains why
         authKnown = true;
         renderUser(null);
         return;
       }
 
-      // Initial check: is someone already signed in (e.g. from the hub)?
       sb.auth.getSession()
         .then(({ data }) => {
           authKnown = true;
@@ -1237,17 +1687,30 @@
           renderUser(null);
         });
 
-      // Later changes: sign in/out here, in another tab, or password recovery.
       sb.auth.onAuthStateChange((event, session) => {
         const wasSignedIn = !!user;
+
         renderUser(session && session.user);
-        if (event === "PASSWORD_RECOVERY") open("newpass");
-        // Just signed in mid-visit: reload the game so it loads their cloud save
-        if (authKnown && !wasSignedIn && user) reloadGame();
+
+        if (event === "PASSWORD_RECOVERY") {
+          open("newpass");
+        }
+
+        if (authKnown && !wasSignedIn && user) {
+          reloadGame();
+        }
       });
     }
 
     document.addEventListener("DOMContentLoaded", setupAuth);
   </script>
+
+  <!-- Native banner ad provider -->
+  <script
+    async="async"
+    data-cfasync="false"
+    src="https://bauval.org/21/157006280add51d8b97e81116eeb2b9b">
+  </script>
+
 </body>
 </html>
