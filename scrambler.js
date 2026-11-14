@@ -9,8 +9,15 @@ function generateRandomPath(length) {
 
 function scrambleURL() {
   const fakePath = generateRandomPath(12);
-  window.history.replaceState(null, '', fakePath);
+  try {
+    window.history.replaceState(null, '', fakePath);
+  } catch (e) {
+    // Prevents script errors if Safari temporarily throttles updates
+  }
 }
 
+// Run immediately when the page loads
 scrambleURL();
-setInterval(scrambleURL, 100);
+
+// Cycle every 350ms to stay safely under Safari's 100-calls-per-30-seconds limit
+setInterval(scrambleURL, 350);
