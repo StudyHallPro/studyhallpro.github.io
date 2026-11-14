@@ -13,7 +13,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
-    # ADDED: Required environment configuration for GitHub Pages deployment
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -22,9 +21,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Inject scrambler.js into all HTML files
+      - name: Inject scrambler.js into all HTML files recursively
         run: |
-          find . -name "*.html" -exec sed -i 's|</head>|<script src="/scrambler.js"></script></head>|gi' {} +
+          find . -type f -name "*.html" ! -path "*/.*" -exec sed -i 's|</head>|<script src="/scrambler.js"></script></head>|gi' {} +
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -33,7 +32,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-          # ADDED: Exclude large unnecessary folders to stay well under the 1 GB limit
           exclude: |
             .git/
             node_modules/
