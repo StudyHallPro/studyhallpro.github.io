@@ -12,6 +12,12 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
+    # ADDED: Required environment configuration for GitHub Pages deployment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,6 +33,10 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
+          # ADDED: Exclude large unnecessary folders to stay well under the 1 GB limit
+          exclude: |
+            .git/
+            node_modules/
 
       - name: Deploy to GitHub Pages
         id: deployment
