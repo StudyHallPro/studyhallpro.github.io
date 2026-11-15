@@ -100,6 +100,99 @@
     }
     .chat-title { font-family: var(--display); font-weight: 600; font-size: 1.1rem; margin: 0; }
     .chat-status { font-size: 0.85rem; color: var(--muted); }
+    .chat-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .chat-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 260px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .chat-user[hidden] { display: none; }
+    .chat-user-email {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .btn-ghost:hover { border-color: var(--sun); color: var(--sun); opacity: 1; }
+
+    /* Sign-in gate */
+    .chat-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-body[hidden] { display: none; }
+
+    .auth-gate {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 28px 24px;
+      overflow-y: auto;
+    }
+    .auth-gate[hidden] { display: none; }
+    .auth-gate h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      margin: 0 0 6px;
+    }
+    .auth-gate p {
+      margin: 0 0 18px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .auth-field { margin-bottom: 12px; }
+    .auth-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+    .auth-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font: inherit;
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+    }
+    .auth-input:focus { border-color: var(--sun); }
+    .auth-status {
+      min-height: 1.2em;
+      margin: 4px 0 10px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+    .auth-status.is-error { color: #a33a2c; }
+    .auth-status.is-ok { color: var(--sun); }
+    .auth-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .link-btn {
+      background: none;
+      border: 0;
+      padding: 0;
+      font: inherit;
+      font-size: 0.85rem;
+      color: var(--sun);
+      text-decoration: underline;
+      cursor: pointer;
+    }
 
     /* Messages Feed */
     .chat-feed {
@@ -163,6 +256,7 @@
       outline: none;
     }
     .chat-input:focus { border-color: var(--sun); }
+    .chat-feed[hidden], .chat-footer[hidden] { display: none; }
     .btn {
       padding: 10px 20px;
       border: 0;
@@ -225,50 +319,222 @@
     <div class="chat-container">
       <div class="chat-header">
         <h2 class="chat-title">Student Lobby Chat</h2>
-        <span class="chat-status" id="chat-status">Connecting...</span>
+        <div class="chat-header-right">
+          <div class="chat-user" id="chat-user" hidden>
+            <span class="chat-user-email" id="chat-user-email"></span>
+            <button type="button" class="btn btn-small btn-ghost" id="chat-signout">Sign out</button>
+          </div>
+          <span class="chat-status" id="chat-status">Signed out</span>
+        </div>
       </div>
 
-      <div class="chat-feed" id="chat-feed"></div>
+      <div class="chat-body">
+        <div class="auth-gate" id="auth-gate" hidden>
+          <h3 id="auth-gate-title">Sign in to chat</h3>
+          <p id="auth-gate-text">
+            You need an Edusphere Academy account to use the lobby chat. Your display name is the
+            email you signed up with and it cannot be changed, so nobody can pretend to be someone else.
+          </p>
 
-      <form class="chat-footer" id="chat-form">
-        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." autocomplete="off" maxlength="500" />
-        <button type="submit" class="btn">Send</button>
-      </form>
+          <form id="auth-form" novalidate>
+            <div class="auth-field">
+              <label for="auth-email">Email</label>
+              <input type="email" class="auth-input" id="auth-email" autocomplete="email" required />
+            </div>
+            <div class="auth-field" id="auth-password-field">
+              <label for="auth-password" id="auth-password-label">Password</label>
+              <input type="password" class="auth-input" id="auth-password" autocomplete="current-password" required />
+            </div>
+            <div class="auth-status" id="auth-status" role="status" aria-live="polite"></div>
+            <div class="auth-actions">
+              <button type="submit" class="btn" id="auth-submit">Sign in</button>
+              <button type="button" class="link-btn" id="auth-switch">Create an account</button>
+              <button type="button" class="link-btn" id="auth-forgot">Forgot password?</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="chat-feed" id="chat-feed" hidden></div>
+
+        <form class="chat-footer" id="chat-form" hidden>
+          <input type="text" class="chat-input" id="chat-input" placeholder="Sign in to type..." autocomplete="off" maxlength="500" disabled />
+          <button type="submit" class="btn" disabled>Send</button>
+        </form>
+      </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
     // ===== SETTINGS: fill these in =====
     // Your Cloudflare Worker address (must start with wss:// and end with /)
     const WS_URL = 'wss://talk.foundersunset.workers.dev/';
     // PUBLIC push key from generate-keys.html (safe to put here)
     const VAPID_PUBLIC_KEY = 'BKM1snz6eUqiAhmJ5JCJLh98UFQNKVhw_WV8d9VctB3ZefQMyvZpGt7_qKUKYCqplw4GBcIwwPUZ_xLQwXN5aVk';
+    // Supabase project used for accounts (same project as allgames.html / cloudsave.js).
+    // The anon/publishable key is meant for the browser; protect data with RLS.
+    const SUPA_URL = 'https://yerxoikcfeulgnrdjkyc.supabase.co';
+    const SUPA_KEY = 'sb_publishable_QX-XZw_wiRj_u0NXHGRkOA_Pq7rGK-p';
     // ===================================
 
-    // Stable ID so the same device keeps the same name and does not get alerts for its own messages
-    let myId = null;
-    try { myId = localStorage.getItem('edusphere_chat_id'); } catch (e) {}
-    if (!myId) {
-      myId = 'student_' + Math.random().toString(36).substring(2, 8);
-      try { localStorage.setItem('edusphere_chat_id', myId); } catch (e) {}
-    }
-    const myName = 'Student_' + myId.slice(-4).toUpperCase();
+    // ---------- Account (Supabase) ----------
+    // Same project as the rest of Edusphere Academy (see allgames.html).
+    const AUTH = { url: SUPA_URL, key: SUPA_KEY, lib: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" };
+    const configured = SUPA_URL.indexOf("YOUR_") !== 0 && SUPA_KEY.indexOf("YOUR_") !== 0;
 
     const feedEl = document.getElementById('chat-feed');
     const statusEl = document.getElementById('chat-status');
     const formEl = document.getElementById('chat-form');
     const inputEl = document.getElementById('chat-input');
+    const sendBtn = formEl.querySelector('button[type="submit"]');
+    const gateEl = document.getElementById('auth-gate');
+    const gateTitleEl = document.getElementById('auth-gate-title');
+    const gateTextEl = document.getElementById('auth-gate-text');
+    const authFormEl = document.getElementById('auth-form');
+    const authEmailEl = document.getElementById('auth-email');
+    const authPassEl = document.getElementById('auth-password');
+    const authPassLabelEl = document.getElementById('auth-password-label');
+    const authStatusEl = document.getElementById('auth-status');
+    const authSubmitEl = document.getElementById('auth-submit');
+    const authSwitchEl = document.getElementById('auth-switch');
+    const authForgotEl = document.getElementById('auth-forgot');
+    const userBarEl = document.getElementById('chat-user');
+    const userEmailEl = document.getElementById('chat-user-email');
+    const signOutEl = document.getElementById('chat-signout');
     const noticeEl = document.getElementById('notice');
     const noticeTextEl = document.getElementById('notice-text');
     const noticeEnableEl = document.getElementById('notice-enable');
     const noticeCloseEl = document.getElementById('notice-close');
 
+    // Identity comes from the signed-in account only. There is no name input anywhere:
+    // the display name is the email the account was created with, so it cannot be
+    // changed to impersonate someone else.
+    let currentUser = null;
+    let myId = null;    // account id
+    let myName = null;  // account email
+
     let socket = null;
     let retryDelay = 1000;
     let pendingSub = null; // push subscription waiting to be sent to the server
 
+    const sb = (configured && window.supabase && window.supabase.createClient)
+      ? window.supabase.createClient(AUTH.url, AUTH.key)
+      : null;
+
+    function displayNameFor(user) {
+      return (user && user.email ? user.email : '').trim().toLowerCase();
+    }
+
+    function sayAuth(text, kind) {
+      authStatusEl.textContent = text || '';
+      authStatusEl.className = 'auth-status' + (kind ? ' is-' + kind : '');
+    }
+
+    let authMode = 'signin';
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      const copy = {
+        signin: {
+          title: 'Sign in to chat',
+          text: 'You need an Edusphere Academy account to use the lobby chat. Your display name is the email you signed up with and it cannot be changed, so nobody can pretend to be someone else.',
+          submit: 'Sign in',
+          switch: 'Create an account'
+        },
+        signup: {
+          title: 'Create an account',
+          text: 'Sign up with your email. That email becomes your chat name, permanently, so other students always know who they are talking to.',
+          submit: 'Create account',
+          switch: 'Back to sign in'
+        },
+        reset: {
+          title: 'Reset password',
+          text: 'Enter the email for your account and we will send a reset link.',
+          submit: 'Send reset link',
+          switch: 'Back to sign in'
+        },
+        newpass: {
+          title: 'Choose a new password',
+          text: 'Pick a new password for your account.',
+          submit: 'Save password',
+          switch: ''
+        }
+      }[mode];
+
+      gateTitleEl.textContent = copy.title;
+      gateTextEl.textContent = copy.text;
+      authSubmitEl.textContent = copy.submit;
+      authSwitchEl.textContent = copy.switch;
+      authSwitchEl.hidden = (mode === 'newpass');
+      authForgotEl.hidden = (mode !== 'signin');
+      authEmailEl.closest('.auth-field').hidden = (mode === 'newpass');
+      document.getElementById('auth-password-field').hidden = (mode === 'reset');
+      authEmailEl.required = (mode !== 'newpass');
+      authPassEl.required = (mode !== 'reset');
+      authPassEl.minLength = (mode === 'reset') ? 0 : 6;
+      authPassEl.autocomplete = (mode === 'signin') ? 'current-password' : 'new-password';
+      sayAuth('');
+    }
+
+    function showGate() {
+      gateEl.hidden = false;
+      feedEl.hidden = true;
+      formEl.hidden = true;
+      inputEl.disabled = true;
+      sendBtn.disabled = true;
+      inputEl.placeholder = 'Sign in to type...';
+      userBarEl.hidden = true;
+      statusEl.textContent = 'Signed out';
+      gateEl.scrollTop = 0;
+    }
+
+    function showChat() {
+      gateEl.hidden = true;
+      feedEl.hidden = false;
+      formEl.hidden = false;
+      inputEl.disabled = false;
+      sendBtn.disabled = false;
+      inputEl.placeholder = 'Type a message...';
+      userBarEl.hidden = false;
+      userEmailEl.textContent = myName;
+      userEmailEl.title = myName;
+    }
+
+    function teardownChat() {
+      if (socket) {
+        try { socket.onclose = null; socket.close(); } catch (e) {}
+        socket = null;
+      }
+      feedEl.innerHTML = '';
+      pendingSub = null;
+    }
+
+    function applyUser(user) {
+      currentUser = user || null;
+
+      if (!currentUser) {
+        myId = null;
+        myName = null;
+        teardownChat();
+        showGate();
+        updateNotice();
+        return;
+      }
+
+      myId = currentUser.id;
+      myName = displayNameFor(currentUser);
+      showChat();
+
+      if (!socket) connect();
+      else if (socket.readyState === WebSocket.OPEN) sendSubscription();
+
+      updateNotice();
+    }
+
     // ---------- Chat connection ----------
     function connect() {
+      if (!currentUser) return;
+
       statusEl.textContent = 'Connecting...';
       socket = new WebSocket(WS_URL);
 
@@ -279,14 +545,16 @@
       });
 
       socket.addEventListener('close', () => {
+        socket = null;
+        if (!currentUser) return; // signed out on purpose: do not reconnect
         statusEl.textContent = 'Reconnecting...';
-        setTimeout(connect, retryDelay);
+        setTimeout(() => { if (currentUser && !socket) connect(); }, retryDelay);
         retryDelay = Math.min(retryDelay * 2, 10000);
       });
 
       socket.addEventListener('error', () => {
         console.error('WebSocket error');
-        socket.close();
+        if (socket) socket.close();
       });
 
       socket.addEventListener('message', (event) => {
@@ -295,16 +563,17 @@
 
         if (data.type === 'history') {
           feedEl.innerHTML = '';
-          data.messages.forEach(appendMessage);
+          (data.messages || []).forEach(appendMessage);
         } else if (data.type === 'message') {
           appendMessage(data.message);
         }
       });
     }
-    connect();
 
     formEl.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!currentUser) return;
+
       const text = inputEl.value.trim();
       if (!text) return;
 
@@ -318,15 +587,19 @@
     });
 
     function appendMessage(msg) {
-      const isMe = msg.senderId === myId;
+      if (!msg) return;
+      const isMe = !!myId && msg.senderId === myId;
       const bubble = document.createElement('div');
       bubble.className = `msg ${isMe ? 'mine' : ''}`;
 
-      const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const when = new Date(msg.timestamp);
+      const time = isNaN(when.getTime())
+        ? ''
+        : when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       bubble.innerHTML = `
-        <div class="msg-sender">${escapeHtml(msg.senderName)}</div>
-        <div>${escapeHtml(msg.text)}</div>
+        <div class="msg-sender">${escapeHtml(msg.senderName || 'Unknown')}</div>
+        <div>${escapeHtml(msg.text || '')}</div>
         <span class="msg-time">${time}</span>
       `;
 
@@ -336,9 +609,79 @@
 
     function escapeHtml(str) {
       const div = document.createElement('div');
-      div.textContent = str;
+      div.textContent = String(str);
       return div.innerHTML;
     }
+
+    // ---------- Sign-in form ----------
+    authSwitchEl.addEventListener('click', () => {
+      setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
+    });
+
+    authForgotEl.addEventListener('click', () => setAuthMode('reset'));
+
+    authFormEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!sb) {
+        sayAuth(
+          configured
+            ? 'Sign in could not load. Check your connection and reload the page.'
+            : 'Sign in is not set up yet: add your Supabase URL and key in chat.html.',
+          'error'
+        );
+        return;
+      }
+
+      const email = authEmailEl.value.trim();
+      const password = authPassEl.value;
+
+      if (authMode !== 'newpass' && !email) {
+        return sayAuth('Enter your email address.', 'error');
+      }
+      if (authMode !== 'reset' && password.length < 6) {
+        return sayAuth('Use a password with at least 6 characters.', 'error');
+      }
+
+      authSubmitEl.disabled = true;
+      sayAuth('Working...');
+
+      try {
+        if (authMode === 'signin') {
+          const { error } = await sb.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+        } else if (authMode === 'signup') {
+          const { data, error } = await sb.auth.signUp({ email, password });
+          if (error) throw error;
+
+          if (!data.session) {
+            setAuthMode('signin');
+            sayAuth('Account created. Check your email to confirm it, then sign in.', 'ok');
+          }
+        } else if (authMode === 'reset') {
+          const { error } = await sb.auth.resetPasswordForEmail(email, {
+            redirectTo: location.origin + location.pathname
+          });
+          if (error) throw error;
+          sayAuth('If that email has an account, a reset link is on its way.', 'ok');
+        } else if (authMode === 'newpass') {
+          const { error } = await sb.auth.updateUser({ password });
+          if (error) throw error;
+          sayAuth('');
+        }
+      } catch (err) {
+        sayAuth(err && err.message ? err.message : 'Something went wrong. Try again.', 'error');
+      } finally {
+        authSubmitEl.disabled = false;
+      }
+    });
+
+    signOutEl.addEventListener('click', async () => {
+      if (sb) {
+        try { await sb.auth.signOut(); } catch (err) { console.error('Sign out failed', err); }
+      }
+      applyUser(null);
+    });
 
     // ---------- Notifications ----------
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
@@ -389,6 +732,11 @@
     }
 
     function updateNotice() {
+      // Not signed in: no chat, so nothing to notify about
+      if (!currentUser) {
+        noticeEl.hidden = true;
+        return;
+      }
       // Already done: notifications are on
       if (pushSupported && Notification.permission === 'granted') {
         noticeEl.hidden = true;
@@ -441,7 +789,7 @@
     }
 
     function sendSubscription() {
-      if (!pendingSub || !socket || socket.readyState !== WebSocket.OPEN) return;
+      if (!pendingSub || !currentUser || !socket || socket.readyState !== WebSocket.OPEN) return;
       socket.send(JSON.stringify({ type: 'subscribe', senderId: myId, subscription: pendingSub }));
     }
 
@@ -466,11 +814,42 @@
       noticeEl.hidden = true;
     });
 
-    // On load: if already allowed, make sure we are subscribed; otherwise show the notice
-    if (pushSupported && Notification.permission === 'granted') {
+    // On load: if already allowed and signed in, make sure we are subscribed; otherwise show the notice
+    if (currentUser && pushSupported && Notification.permission === 'granted') {
       subscribeToPush().catch((err) => console.error(err));
     }
     updateNotice();
+
+    // ---------- Start ----------
+    setAuthMode('signin');
+    showGate();
+
+    if (sb) {
+      sb.auth.getSession().then(({ data }) => {
+        applyUser(data && data.session ? data.session.user : null);
+      }).catch((err) => {
+        console.error('Could not read the session', err);
+        applyUser(null);
+      });
+
+      sb.auth.onAuthStateChange((event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          applyUser(null);
+          setAuthMode('newpass');
+          return;
+        }
+        applyUser(session && session.user ? session.user : null);
+      });
+    } else {
+      applyUser(null);
+      sayAuth(
+        configured
+          ? 'Sign in could not load. Check your connection and reload the page.'
+          : 'Sign in is not set up yet: add your Supabase URL and key in chat.html.',
+        'error'
+      );
+    }
+
   </script>
 </body>
 </html>
