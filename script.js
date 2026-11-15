@@ -228,7 +228,7 @@ function getGameId(href) {
 }
 
 /**
- * Opens a game in a new tab. Standard games go through player.html so the
+ * Opens a game in the SAME tab. Standard games go through player.html so the
  * WGPlayer ad tag is loaded; non-standard paths open directly as before.
  */
 function launchSimulation(href, title) {
@@ -241,9 +241,9 @@ function launchSimulation(href, title) {
 
   if (id) {
     const params = new URLSearchParams({ game: id, title: title || id });
-    window.open('player.html?' + params.toString(), '_blank');
+    window.location.href = 'player.html?' + params.toString();
   } else {
-    window.open(href, '_blank');
+    window.location.href = href;
   }
 }
 
