@@ -14,12 +14,20 @@
 
   <style>
     :root {
+      color-scheme: light;
       --bg: #f5f4ed;
+      --bg-deep: #f5f4ed;
+      --surface: #fffefa;
+      --surface-raised: #eeefe7;
       --panel: #fffefa;
       --panel-hi: #eeefe7;
       --line: #d9ddd3;
       --text: #24352f;
       --muted: #63716a;
+      --accent: #376b56;
+      --accent-strong: #28523f;
+      --pink: #376b56;
+      --cyan: #376b56;
       --sun: #376b56;
       --radius: 9px;
       --display: "Lora", Georgia, serif;
@@ -27,270 +35,1416 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+
     body {
       margin: 0;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       font-family: var(--body);
       color: var(--text);
       background: var(--bg);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .page {
-      width: 100%;
-      max-width: 600px;
-      display: flex;
-      flex-direction: column;
-      height: 85vh;
+    a { color: var(--accent); }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    [hidden] { display: none !important; }
+
+    /* ---- Top header (matches allgames.html / player.html) ---- */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 254, 250, .96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
-    .topbar {
+    .header-inner {
+      width: min(1180px, calc(100% - 40px));
+      margin-inline: auto;
+      min-height: 70px;
+      padding: 10px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      gap: 14px;
+      flex-wrap: wrap;
     }
+
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 12px;
       color: var(--text);
       text-decoration: none;
+      flex: 0 0 auto;
     }
+
     .brand-mark {
       display: grid;
       place-items: center;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
+      border-radius: 7px;
       font-family: var(--display);
       font-size: 1rem;
+      font-weight: 700;
       color: #fffefa;
-      background: var(--sun);
-      border-radius: 7px;
+      background: var(--accent);
     }
-    .brand-text { font-family: var(--display); font-size: 1.1rem; font-weight: 600; }
 
-    /* Chat Window Container */
+    .brand-name {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: .01em;
+    }
+
+    .brand-name span { color: var(--accent); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      max-width: 220px;
+      padding: 4px 12px 4px 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-hi);
+      color: var(--text);
+      font: inherit;
+    }
+
+    .user-avatar {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: .78rem;
+      font-weight: 700;
+      color: #fffefa;
+      background: var(--accent);
+    }
+
+    .user-chip-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: .88rem;
+      font-weight: 600;
+    }
+
+    /* ---- Buttons ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      cursor: pointer;
+      font: 700 .95rem var(--body);
+      text-align: center;
+      text-decoration: none;
+      color: #fffefa;
+      background: var(--accent);
+      transition: background .15s, border-color .15s;
+    }
+
+    .btn:hover { background: var(--accent-strong); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+
+    .btn--quiet {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--line);
+    }
+
+    .btn--quiet:hover {
+      color: var(--text);
+      background: var(--panel-hi);
+      border-color: var(--accent);
+    }
+
+    .btn--sm {
+      min-height: 32px;
+      padding: 4px 11px;
+      font-size: .82rem;
+    }
+
+    /* ---- Main Page ---- */
+    .page-main {
+      flex: 1;
+      width: min(920px, calc(100% - 32px));
+      margin: 28px auto 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px 20px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 18px;
+      height: 2px;
+      background: currentColor;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(1.75rem, 4vw, 2.4rem);
+      line-height: 1.15;
+    }
+
+    .page-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .98rem;
+    }
+
+    /* ---- Chat Container ---- */
     .chat-container {
       flex: 1;
+      min-height: 500px;
+      max-height: 68vh;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 4px 14px rgba(36,53,47,.07);
+      box-shadow: 0 4px 14px rgba(36, 53, 47, .07);
     }
 
     .chat-header {
       background: var(--panel-hi);
-      padding: 14px 18px;
+      padding: 13px 18px;
       border-bottom: 1px solid var(--line);
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      gap: 10px 14px;
     }
-    .chat-title { font-family: var(--display); font-weight: 600; font-size: 1.1rem; margin: 0; }
-    .chat-status { font-size: 0.85rem; color: var(--muted); }
 
-    /* Messages Feed */
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chat-title {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .identity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      font-size: .84rem;
+      color: var(--muted);
+    }
+
+    .identity-pill strong { color: var(--text); }
+
+    .identity-edit {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--accent);
+      font: 700 .82rem var(--body);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .chat-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    .status-pill.is-live {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .status-pill.is-live .status-dot { background: var(--accent); }
+
+    .status-pill.is-offline { color: #a33b2f; }
+    .status-pill.is-offline .status-dot { background: #a33b2f; }
+
+    /* ---- Gate Panels (Checking / Sign-in / Display Name) ---- */
+    .chat-gate {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 28px 20px;
+      background: var(--panel);
+    }
+
+    .gate-card {
+      width: min(440px, 100%);
+      padding: 28px 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-raised);
+      text-align: center;
+    }
+
+    .gate-icon {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      background: var(--accent);
+      color: #fffefa;
+    }
+
+    .gate-card h2 {
+      margin: 0 0 8px;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 1.45rem;
+      color: var(--text);
+    }
+
+    .gate-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: .96rem;
+    }
+
+    .gate-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .name-form {
+      text-align: left;
+    }
+
+    .name-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .name-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font: 500 1rem var(--body);
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+    }
+
+    .name-input:focus { border-color: var(--accent); }
+
+    .name-hint {
+      margin: 6px 0 0;
+      font-size: .82rem !important;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .name-error {
+      min-height: 1.3em;
+      margin: 8px 0 10px !important;
+      font-size: .86rem !important;
+      font-weight: 600;
+      color: #a33b2f !important;
+      text-align: left;
+    }
+
+    /* ---- Messages Feed ---- */
     .chat-feed {
       flex: 1;
-      padding: 16px;
+      padding: 18px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
+    .chat-empty {
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
     .msg {
-      max-width: 80%;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      line-height: 1.4;
+      max-width: min(80%, 540px);
+      padding: 9px 13px;
+      border-radius: 9px;
+      font-size: .96rem;
+      line-height: 1.45;
       background: var(--panel-hi);
       border: 1px solid var(--line);
       align-self: flex-start;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
+
     .msg.mine {
-      background: var(--sun);
+      background: var(--accent);
       color: #fffefa;
       border-color: transparent;
       align-self: flex-end;
     }
 
-    .msg-sender {
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-      color: var(--sun);
+    .msg-meta {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 3px;
     }
-    .msg.mine .msg-sender { display: none; }
+
+    .msg-sender {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .msg.mine .msg-sender {
+      color: inherit;
+      opacity: .88;
+    }
 
     .msg-time {
-      font-size: 0.7rem;
-      opacity: 0.7;
-      float: right;
-      margin-left: 10px;
-      margin-top: 4px;
+      font-size: .72rem;
+      opacity: .72;
+      white-space: nowrap;
     }
 
-    /* Input Footer */
+    .msg-text {
+      white-space: pre-wrap;
+    }
+
+    /* ---- Input Footer ---- */
     .chat-footer {
-      padding: 12px;
+      padding: 12px 14px;
       background: var(--panel-hi);
       border-top: 1px solid var(--line);
       display: flex;
       gap: 10px;
+      align-items: center;
     }
+
     .chat-input {
       flex: 1;
+      min-width: 0;
       padding: 10px 14px;
       border: 1px solid var(--line);
       border-radius: 7px;
-      font: inherit;
+      font: 500 .98rem var(--body);
       background: var(--panel);
       color: var(--text);
       outline: none;
     }
-    .chat-input:focus { border-color: var(--sun); }
-    .btn {
-      padding: 10px 20px;
+
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-input:disabled { opacity: .65; }
+
+    /* ---- Auth Popup (matches allgames.html / player.html) ---- */
+    .daily-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(36, 53, 47, .38);
+      backdrop-filter: blur(6px);
+      animation: fade .2s ease-out;
+    }
+
+    .daily-modal {
+      position: relative;
+      width: min(460px, 100%);
+      padding: 40px 32px 30px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 18px 48px rgba(36, 53, 47, .22);
+      animation: pop .3s cubic-bezier(.2, 1.4, .4, 1);
+    }
+
+    .daily-burst {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: grid;
+      place-items: center;
+      width: 60px;
+      height: 60px;
+      font-size: 1.75rem;
+      background: var(--accent);
+      border: 3px solid var(--panel);
+      border-radius: 50%;
+      color: #fffefa;
+    }
+
+    .auth-modal { text-align: left; }
+    .auth-modal h2 {
+      margin: 0 0 16px;
+      text-align: center;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 1.65rem;
+      color: var(--text);
+    }
+
+    .auth-field {
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .auth-field span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 600;
+    }
+
+    .auth-field input {
+      width: 100%;
+      padding: 12px 14px;
+      font: 500 1rem var(--body);
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+    }
+
+    .auth-field input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .auth-pass { position: relative; }
+    .auth-pass input { padding-right: 76px; }
+
+    .auth-eye {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 10px;
       border: 0;
       border-radius: 7px;
       cursor: pointer;
-      font: 700 0.95rem var(--body);
-      color: #fffefa;
-      background: var(--sun);
-      transition: background .15s;
+      background: var(--panel-hi);
+      color: var(--accent);
+      font: 700 .8rem var(--body);
     }
-    .btn:hover { opacity: 0.9; }
+
+    .auth-eye:hover { color: var(--text); }
+
+    .auth-status {
+      min-height: 1.4em;
+      margin: 0 0 14px;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
+    .auth-status.is-error { color: #a33b2f; }
+    .auth-status.is-ok { color: var(--accent); }
+    .auth-submit { width: 100%; }
+
+    .auth-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 6px 14px;
+      margin-top: 18px;
+    }
+
+    .auth-link {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--accent);
+      font: 600 .9rem var(--body);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .auth-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: none;
+      color: var(--muted);
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .auth-close:hover { color: var(--text); }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      margin-top: 40px;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-inner {
+      width: min(1180px, calc(100% - 40px));
+      margin-inline: auto;
+      min-height: 76px;
+      padding: 16px 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 18px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .footer-inner p { margin: 0; }
+
+    /* ---- Dark mode contrast adjustments ---- */
+    :root[data-theme="dark"] .brand-mark,
+    :root[data-theme="dark"] .user-avatar,
+    :root[data-theme="dark"] .gate-icon,
+    :root[data-theme="dark"] .daily-burst,
+    :root[data-theme="dark"] .msg.mine {
+      color: #17211a;
+    }
+
+    :root[data-theme="dark"] .btn.btn--quiet {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--line);
+    }
+
+    :root[data-theme="dark"] .btn.btn--quiet:hover {
+      color: var(--text);
+      background: var(--surface-raised);
+      border-color: var(--accent);
+    }
+
+    :root[data-theme="dark"] .status-pill.is-offline,
+    :root[data-theme="dark"] .name-error,
+    :root[data-theme="dark"] .auth-status.is-error {
+      color: #f08b7d;
+    }
+
+    :root[data-theme="dark"] .status-pill.is-offline .status-dot {
+      background: #f08b7d;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: scale(.92) translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 680px) {
+      .header-inner { width: min(100% - 28px, 1180px); gap: 10px; }
+      .brand-name { display: none; }
+      .page-main { width: calc(100% - 24px); margin-top: 18px; }
+      .chat-container { min-height: 440px; max-height: 74vh; }
+      .user-chip-name { display: none; }
+      .user-chip { padding: 4px; }
+      .footer-inner { width: min(100% - 28px, 1180px); flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-
-  <div class="page">
-    <div class="topbar">
-      <a href="/index.html" class="brand">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand" aria-label="Edusphere Academy home">
         <span class="brand-mark" aria-hidden="true">EA</span>
-        <span class="brand-text">Edusphere Academy</span>
+        <span class="brand-name">Edusphere <span>Academy</span></span>
       </a>
-      <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+
+      <div class="header-actions">
+        <div class="user-chip" id="user-chip" hidden>
+          <span class="user-avatar" id="user-avatar" aria-hidden="true">?</span>
+          <span class="user-chip-name" id="user-chip-name"></span>
+        </div>
+
+        <a href="allgames.html" class="btn">&larr; All games</a>
+        <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        <button type="button" class="btn" id="auth-toggle">Sign in</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Student Lounge</p>
+        <h1>Student Lobby Chat</h1>
+        <p class="page-subtitle">Sign in and pick a display name to chat with other players. Messages stay for 24 hours.</p>
+      </div>
     </div>
 
-    <div class="chat-container">
+    <section class="chat-container" aria-label="Student Lobby Chat">
       <div class="chat-header">
-        <h2 class="chat-title">Student Lobby Chat</h2>
-        <span class="chat-status" id="chat-status">Connecting...</span>
+        <div class="chat-header-left">
+          <h2 class="chat-title">Live Lobby</h2>
+          <span class="identity-pill" id="identity-pill" hidden>
+            <span>Chatting as <strong id="active-display-name"></strong></span>
+            <button type="button" class="identity-edit" id="change-name-btn">Change name</button>
+          </span>
+        </div>
+
+        <div class="chat-header-right">
+          <span class="status-pill" id="chat-status">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="chat-status-text">Checking account...</span>
+          </span>
+          <button type="button" class="btn btn--quiet btn--sm" id="reconnect-btn" hidden>Reconnect</button>
+        </div>
       </div>
 
-      <div class="chat-feed" id="chat-feed"></div>
+      <!-- Gate 0: Checking session -->
+      <div class="chat-gate" id="gate-loading">
+        <div class="gate-card">
+          <div class="gate-icon" aria-hidden="true">⏳</div>
+          <h2>Checking your session</h2>
+          <p>Verifying your Edusphere Academy account before connecting to the lobby...</p>
+        </div>
+      </div>
 
-      <form class="chat-footer" id="chat-form">
-        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." autocomplete="off" maxlength="500" />
-        <button type="submit" class="btn">Send</button>
+      <!-- Gate 1: Must be signed in -->
+      <div class="chat-gate" id="gate-auth" hidden>
+        <div class="gate-card">
+          <div class="gate-icon" aria-hidden="true">🔐</div>
+          <h2>Sign in to chat</h2>
+          <p>You must be logged into your Edusphere Academy account before joining the Student Lobby Chat.</p>
+          <div class="gate-actions">
+            <button type="button" class="btn" id="gate-signin-btn">Sign in</button>
+            <button type="button" class="btn btn--quiet" id="gate-signup-btn">Create account</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gate 2: Must type a display name -->
+      <div class="chat-gate" id="gate-name" hidden>
+        <div class="gate-card">
+          <div class="gate-icon" aria-hidden="true">💬</div>
+          <h2>Choose your display name</h2>
+          <p>Type the name other players will see next to your messages. Signed in as <strong id="gate-account-email"></strong>.</p>
+
+          <form class="name-form" id="name-form" novalidate>
+            <label class="name-label" for="display-name-input">Display name</label>
+            <input
+              type="text"
+              class="name-input"
+              id="display-name-input"
+              placeholder="e.g. Alex M."
+              minlength="2"
+              maxlength="24"
+              autocomplete="nickname"
+              required
+            />
+            <p class="name-hint">2–24 characters. Avoid sharing private info.</p>
+            <p class="name-error" id="name-error" role="alert" aria-live="polite"></p>
+            <div class="gate-actions">
+              <button type="submit" class="btn">Enter chat</button>
+              <button type="button" class="btn btn--quiet" id="cancel-name-btn" hidden>Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Active Chat Feed & Composer -->
+      <div class="chat-feed" id="chat-feed" hidden aria-live="polite"></div>
+
+      <form class="chat-footer" id="chat-form" hidden>
+        <input
+          type="text"
+          class="chat-input"
+          id="chat-input"
+          placeholder="Type a message..."
+          maxlength="500"
+          autocomplete="off"
+        />
+        <button type="submit" class="btn" id="send-btn">Send</button>
       </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>Edusphere Academy is fictional; this site is a browser-game collection.</p>
+      <p>
+        <a href="index.html">Home</a> ·
+        <a href="allgames.html">All games</a> ·
+        <a href="game-guide.html">Game guide</a> ·
+        <a href="privacy.html">Privacy Policy</a> ·
+        <a href="terms.html">Terms of Service</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Authentication popup (shared Supabase session with allgames.html & player.html) -->
+  <div class="daily-overlay auth-overlay" id="auth-overlay" hidden>
+    <div class="daily-modal auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div class="daily-burst" aria-hidden="true">🔐</div>
+      <button type="button" class="auth-close" id="auth-close" aria-label="Close">&times;</button>
+
+      <h2 id="auth-title">Sign in</h2>
+
+      <form id="auth-form" novalidate>
+        <label class="auth-field" id="auth-email-wrap">
+          <span>Email</span>
+          <input type="email" id="auth-email" autocomplete="email" required>
+        </label>
+
+        <label class="auth-field" id="auth-password-wrap">
+          <span id="auth-password-label">Password</span>
+          <div class="auth-pass">
+            <input type="password" id="auth-password" autocomplete="current-password" minlength="6" required>
+            <button type="button" class="auth-eye" id="auth-eye" aria-label="Show password" aria-pressed="false">Show</button>
+          </div>
+        </label>
+
+        <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
+        <button type="submit" class="btn auth-submit" id="auth-submit">Sign in</button>
+      </form>
+
+      <div class="auth-links">
+        <button type="button" class="auth-link" id="auth-switch"></button>
+        <button type="button" class="auth-link" id="auth-forgot">Forgot password?</button>
+      </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
-    // Your Cloudflare Worker address (must start with wss:// and end with /)
-    const WS_URL = 'wss://talk.foundersunset.workers.dev/';
+    (() => {
+      const WS_URL = "wss://talk.foundersunset.workers.dev/";
+      const SUPA_URL = "https://yerxoikcfeulgnrdjkyc.supabase.co";
+      const SUPA_KEY = "sb_publishable_QX-XZw_wiRj_u0NXHGRkOA_Pq7rGK-p";
 
-    let myId = sessionStorage.getItem('edusphere_chat_id');
-    if (!myId) {
-      myId = 'student_' + Math.random().toString(36).substring(2, 8);
-      sessionStorage.setItem('edusphere_chat_id', myId);
-    }
-    const myName = 'Student_' + myId.slice(-4).toUpperCase();
+      const $ = (id) => document.getElementById(id);
 
-    const feedEl = document.getElementById('chat-feed');
-    const statusEl = document.getElementById('chat-status');
-    const formEl = document.getElementById('chat-form');
-    const inputEl = document.getElementById('chat-input');
+      // Header & Auth DOM
+      const userChip = $("user-chip");
+      const userAvatar = $("user-avatar");
+      const userChipName = $("user-chip-name");
+      const authToggleBtn = $("auth-toggle");
 
-    let socket = null;
-    let retryDelay = 1000;
+      const authOverlay = $("auth-overlay");
+      const authForm = $("auth-form");
+      const authStatus = $("auth-status");
+      const authEmail = $("auth-email");
+      const authPass = $("auth-password");
+      const authSubmit = $("auth-submit");
+      const authSwitch = $("auth-switch");
+      const authForgot = $("auth-forgot");
+      const authEye = $("auth-eye");
+      const authClose = $("auth-close");
 
-    function connect() {
-      statusEl.textContent = 'Connecting...';
-      socket = new WebSocket(WS_URL);
+      // Chat & Gate DOM
+      const gateLoading = $("gate-loading");
+      const gateAuth = $("gate-auth");
+      const gateName = $("gate-name");
+      const gateAccountEmail = $("gate-account-email");
+      const gateSigninBtn = $("gate-signin-btn");
+      const gateSignupBtn = $("gate-signup-btn");
 
-      socket.addEventListener('open', () => {
-        statusEl.textContent = 'Live';
-        retryDelay = 1000;
-      });
+      const nameForm = $("name-form");
+      const displayNameInput = $("display-name-input");
+      const nameError = $("name-error");
+      const cancelNameBtn = $("cancel-name-btn");
+      const changeNameBtn = $("change-name-btn");
 
-      socket.addEventListener('close', () => {
-        statusEl.textContent = 'Reconnecting...';
-        setTimeout(connect, retryDelay);
-        retryDelay = Math.min(retryDelay * 2, 10000);
-      });
+      const identityPill = $("identity-pill");
+      const activeDisplayNameEl = $("active-display-name");
+      const statusPill = $("chat-status");
+      const statusText = $("chat-status-text");
+      const reconnectBtn = $("reconnect-btn");
 
-      socket.addEventListener('error', () => {
-        console.error('WebSocket error');
-        socket.close();
-      });
+      const feedEl = $("chat-feed");
+      const chatForm = $("chat-form");
+      const chatInput = $("chat-input");
+      const sendBtn = $("send-btn");
 
-      socket.addEventListener('message', (event) => {
-        let data;
-        try { data = JSON.parse(event.data); } catch { return; }
+      const lib = window.supabase && window.supabase.createClient;
+      const sb = lib ? window.supabase.createClient(SUPA_URL, SUPA_KEY) : null;
 
-        if (data.type === 'history') {
-          feedEl.innerHTML = '';
-          data.messages.forEach(appendMessage);
-        } else if (data.type === 'message') {
-          appendMessage(data.message);
-        }
-      });
-    }
-    connect();
+      let authMode = "signin";
+      let lastFocus = null;
+      let currentUser = null;
+      let displayName = "";
+      let editingName = false;
+      let socket = null;
+      let retryTimer = null;
+      let retryDelay = 1000;
 
-    formEl.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = inputEl.value.trim();
-      if (!text) return;
-
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        statusEl.textContent = 'Not connected, retrying...';
-        return; // keep the text in the box so it isn't lost
+      function nameStorageKey(uid) {
+        return "edusphere_chat_name_" + uid;
       }
 
-      socket.send(JSON.stringify({
-        senderId: myId,
-        senderName: myName,
-        text: text
-      }));
-      inputEl.value = '';
-    });
+      function sanitizeName(raw) {
+        return String(raw || "").replace(/\s+/g, " ").trim();
+      }
 
-    function appendMessage(msg) {
-      const isMe = msg.senderId === myId;
-      const bubble = document.createElement('div');
-      bubble.className = `msg ${isMe ? 'mine' : ''}`;
+      function getSavedName(uid) {
+        if (!uid) return "";
+        try {
+          return sanitizeName(sessionStorage.getItem(nameStorageKey(uid)) || "");
+        } catch (e) {
+          return "";
+        }
+      }
 
-      const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      function saveName(uid, name) {
+        if (!uid) return;
+        try {
+          sessionStorage.setItem(nameStorageKey(uid), name);
+        } catch (e) {}
+      }
 
-      bubble.innerHTML = `
-        <div class="msg-sender">${escapeHtml(msg.senderName)}</div>
-        <div>${escapeHtml(msg.text)}</div>
-        <span class="msg-time">${time}</span>
-      `;
+      function clearSavedName(uid) {
+        if (!uid) return;
+        try {
+          sessionStorage.removeItem(nameStorageKey(uid));
+        } catch (e) {}
+      }
 
-      feedEl.appendChild(bubble);
-      feedEl.scrollTop = feedEl.scrollHeight;
-    }
+      function setChatStatus(label, state) {
+        statusText.textContent = label;
+        statusPill.classList.remove("is-live", "is-offline");
+        if (state === "live") statusPill.classList.add("is-live");
+        if (state === "offline") statusPill.classList.add("is-offline");
+      }
 
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+      function clearRetry() {
+        if (retryTimer) {
+          clearTimeout(retryTimer);
+          retryTimer = null;
+        }
+      }
+
+      function closeSocket() {
+        clearRetry();
+        retryDelay = 1000;
+        if (socket) {
+          const old = socket;
+          socket = null;
+          try {
+            old.close();
+          } catch (e) {}
+        }
+        reconnectBtn.hidden = true;
+      }
+
+      function updateComposerState() {
+        const isLive = Boolean(currentUser && displayName && !editingName && socket && socket.readyState === WebSocket.OPEN);
+        chatInput.disabled = !isLive;
+        sendBtn.disabled = !isLive;
+      }
+
+      function connectSocket() {
+        if (!currentUser || !displayName || editingName) return;
+        if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+          return;
+        }
+
+        clearRetry();
+        setChatStatus("Connecting...", "");
+        reconnectBtn.hidden = true;
+        updateComposerState();
+
+        const ws = new WebSocket(WS_URL);
+        socket = ws;
+
+        ws.addEventListener("open", () => {
+          if (socket !== ws) return;
+          retryDelay = 1000;
+          setChatStatus("Live", "live");
+          reconnectBtn.hidden = true;
+          updateComposerState();
+          chatInput.focus();
+        });
+
+        ws.addEventListener("close", () => {
+          if (socket !== ws) return;
+          socket = null;
+          updateComposerState();
+          if (currentUser && displayName && !editingName) {
+            setChatStatus("Reconnecting...", "offline");
+            reconnectBtn.hidden = false;
+            clearRetry();
+            retryTimer = setTimeout(connectSocket, retryDelay);
+            retryDelay = Math.min(retryDelay * 2, 10000);
+          }
+        });
+
+        ws.addEventListener("error", () => {
+          if (socket !== ws) return;
+          try { ws.close(); } catch (e) {}
+        });
+
+        ws.addEventListener("message", (event) => {
+          if (socket !== ws || !currentUser || !displayName) return;
+          let data;
+          try { data = JSON.parse(event.data); } catch (e) { return; }
+
+          if (data.type === "history" && Array.isArray(data.messages)) {
+            renderHistory(data.messages);
+          } else if (data.type === "message" && data.message) {
+            appendMessage(data.message);
+          }
+        });
+      }
+
+      function showEmptyFeedNote() {
+        const empty = document.createElement("p");
+        empty.className = "chat-empty";
+        empty.textContent = "No messages yet today. Say hello to start the conversation!";
+        feedEl.appendChild(empty);
+      }
+
+      function renderHistory(messages) {
+        feedEl.replaceChildren();
+        if (!messages.length) {
+          showEmptyFeedNote();
+          return;
+        }
+        messages.forEach((msg) => appendMessage(msg, true));
+        feedEl.scrollTop = feedEl.scrollHeight;
+      }
+
+      function appendMessage(msg, skipScroll) {
+        if (!msg || !msg.text) return;
+
+        const emptyNote = feedEl.querySelector(".chat-empty");
+        if (emptyNote) emptyNote.remove();
+
+        const isMe = Boolean(currentUser && msg.senderId === currentUser.id);
+        const nearBottom = feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight < 90;
+
+        const bubble = document.createElement("div");
+        bubble.className = "msg" + (isMe ? " mine" : "");
+
+        const meta = document.createElement("div");
+        meta.className = "msg-meta";
+
+        const sender = document.createElement("span");
+        sender.className = "msg-sender";
+        const senderLabel = sanitizeName(msg.senderName) || "Student";
+        sender.textContent = isMe ? "You (" + senderLabel + ")" : senderLabel;
+
+        const time = document.createElement("span");
+        time.className = "msg-time";
+        const ts = typeof msg.timestamp === "number" ? msg.timestamp : Date.now();
+        time.textContent = new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+        meta.append(sender, time);
+
+        const body = document.createElement("div");
+        body.className = "msg-text";
+        body.textContent = String(msg.text);
+
+        bubble.append(meta, body);
+        feedEl.appendChild(bubble);
+
+        if (!skipScroll && (isMe || nearBottom)) {
+          feedEl.scrollTop = feedEl.scrollHeight;
+        }
+      }
+
+      function syncView() {
+        const email = currentUser && currentUser.email ? currentUser.email : "";
+        const metadata = currentUser && currentUser.user_metadata ? currentUser.user_metadata : {};
+        const accountName = metadata.full_name || metadata.name || (email ? email.split("@")[0] : "");
+
+        // Header account UI
+        userChip.hidden = !currentUser;
+        if (currentUser) {
+          const label = displayName || accountName || email;
+          userAvatar.textContent = (label || "?").slice(0, 2).toUpperCase();
+          userChipName.textContent = label;
+          authToggleBtn.textContent = "Sign out";
+          authToggleBtn.classList.add("btn--quiet");
+        } else {
+          authToggleBtn.textContent = "Sign in";
+          authToggleBtn.classList.remove("btn--quiet");
+        }
+
+        gateLoading.hidden = true;
+
+        if (!currentUser) {
+          closeSocket();
+          feedEl.replaceChildren();
+          identityPill.hidden = true;
+          gateAuth.hidden = false;
+          gateName.hidden = true;
+          feedEl.hidden = true;
+          chatForm.hidden = true;
+          setChatStatus("Sign in required", "");
+          return;
+        }
+
+        if (!displayName || editingName) {
+          const openingGate = gateName.hidden;
+          identityPill.hidden = !displayName;
+          activeDisplayNameEl.textContent = displayName;
+          gateAuth.hidden = true;
+          gateName.hidden = false;
+          feedEl.hidden = true;
+          chatForm.hidden = true;
+          gateAccountEmail.textContent = email || "your account";
+          cancelNameBtn.hidden = !displayName;
+          setChatStatus("Display name required", "");
+          if (openingGate) {
+            nameError.textContent = "";
+            displayNameInput.value = (editingName && displayName) ? displayName : "";
+            displayNameInput.focus();
+          }
+          return;
+        }
+
+        // Logged in AND display name entered
+        gateAuth.hidden = true;
+        gateName.hidden = true;
+        identityPill.hidden = false;
+        activeDisplayNameEl.textContent = displayName;
+        feedEl.hidden = false;
+        chatForm.hidden = false;
+
+        connectSocket();
+        updateComposerState();
+      }
+
+      // ---- Display Name Form ----
+      nameForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const chosen = sanitizeName(displayNameInput.value);
+        if (chosen.length < 2 || chosen.length > 24) {
+          nameError.textContent = "Please type a display name between 2 and 24 characters.";
+          displayNameInput.focus();
+          return;
+        }
+
+        nameError.textContent = "";
+        displayName = chosen;
+        editingName = false;
+        saveName(currentUser.id, displayName);
+        syncView();
+      });
+
+      changeNameBtn.addEventListener("click", () => {
+        if (!currentUser) return;
+        editingName = true;
+        syncView();
+      });
+
+      cancelNameBtn.addEventListener("click", () => {
+        if (!currentUser || !displayName) return;
+        editingName = false;
+        syncView();
+      });
+
+      // ---- Chat Send Form ----
+      chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!currentUser || !displayName) return;
+
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+          setChatStatus("Not connected, retrying...", "offline");
+          return;
+        }
+
+        socket.send(JSON.stringify({
+          senderId: currentUser.id,
+          senderName: displayName,
+          text: text
+        }));
+
+        chatInput.value = "";
+        chatInput.focus();
+      });
+
+      reconnectBtn.addEventListener("click", () => {
+        retryDelay = 1000;
+        connectSocket();
+      });
+
+      // ---- Supabase Auth Modal (same flow as allgames.html & player.html) ----
+      function say(text, kind) {
+        authStatus.textContent = text || "";
+        authStatus.className = "auth-status" + (kind ? " is-" + kind : "");
+      }
+
+      function setAuthMode(m) {
+        authMode = m;
+        const titles = {
+          signin: "Sign in",
+          signup: "Create account",
+          reset: "Reset password",
+          newpass: "Choose a new password"
+        };
+        const buttons = {
+          signin: "Sign in",
+          signup: "Create account",
+          reset: "Send reset link",
+          newpass: "Save password"
+        };
+
+        $("auth-title").textContent = titles[m];
+        authSubmit.textContent = buttons[m];
+        $("auth-email-wrap").hidden = (m === "newpass");
+        $("auth-password-wrap").hidden = (m === "reset");
+        $("auth-password-label").textContent = (m === "newpass") ? "New password" : "Password";
+        authPass.autocomplete = (m === "signin") ? "current-password" : "new-password";
+        authEmail.required = (m !== "newpass");
+        authPass.required = (m !== "reset");
+        authPass.minLength = (m === "reset") ? 0 : 6;
+        authSwitch.textContent = (m === "signin") ? "Create an account" : "Back to sign in";
+        authForgot.hidden = (m !== "signin");
+        authSwitch.hidden = (m === "newpass");
+        say("");
+      }
+
+      function setPassVisible(show) {
+        authPass.type = show ? "text" : "password";
+        authEye.textContent = show ? "Hide" : "Show";
+        authEye.setAttribute("aria-label", show ? "Hide password" : "Show password");
+        authEye.setAttribute("aria-pressed", String(show));
+      }
+
+      function openAuth(m) {
+        lastFocus = document.activeElement;
+        setAuthMode(m || "signin");
+        authOverlay.hidden = false;
+
+        if (!sb) {
+          say("Login could not load. Check your connection and reload.", "error");
+        }
+
+        (m === "newpass" ? authPass : authEmail).focus();
+      }
+
+      function closeAuth() {
+        authOverlay.hidden = true;
+        authForm.reset();
+        setPassVisible(false);
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+
+      authEye.addEventListener("click", () => setPassVisible(authPass.type === "password"));
+      authSwitch.addEventListener("click", () => setAuthMode(authMode === "signin" ? "signup" : "signin"));
+      authForgot.addEventListener("click", () => setAuthMode("reset"));
+      authClose.addEventListener("click", closeAuth);
+
+      authOverlay.addEventListener("click", (e) => {
+        if (e.target === authOverlay) closeAuth();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !authOverlay.hidden) closeAuth();
+      });
+
+      gateSigninBtn.addEventListener("click", () => openAuth("signin"));
+      gateSignupBtn.addEventListener("click", () => openAuth("signup"));
+
+      authToggleBtn.addEventListener("click", async () => {
+        if (!currentUser) {
+          openAuth("signin");
+          return;
+        }
+        const prevUid = currentUser.id;
+        if (sb) {
+          await sb.auth.signOut();
+        }
+        clearSavedName(prevUid);
+        currentUser = null;
+        displayName = "";
+        editingName = false;
+        syncView();
+      });
+
+      authForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!sb) return;
+
+        const email = authEmail.value.trim();
+        const password = authPass.value;
+
+        if (authMode !== "newpass" && !email) {
+          return say("Enter your email address.", "error");
+        }
+        if (authMode !== "reset" && password.length < 6) {
+          return say("Use a password with at least 6 characters.", "error");
+        }
+
+        authSubmit.disabled = true;
+        say("Working...");
+
+        try {
+          if (authMode === "signin") {
+            const { error } = await sb.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            closeAuth();
+          } else if (authMode === "signup") {
+            const { data, error } = await sb.auth.signUp({ email, password });
+            if (error) throw error;
+            if (data.session) {
+              closeAuth();
+            } else {
+              setAuthMode("signin");
+              say("Account created. Check your email to confirm it, then sign in.", "ok");
+            }
+          } else if (authMode === "reset") {
+            const { error } = await sb.auth.resetPasswordForEmail(email, {
+              redirectTo: location.origin + location.pathname
+            });
+            if (error) throw error;
+            say("If that email has an account, a reset link is on its way.", "ok");
+          } else if (authMode === "newpass") {
+            const { error } = await sb.auth.updateUser({ password });
+            if (error) throw error;
+            closeAuth();
+          }
+        } catch (err) {
+          say(err && err.message ? err.message : "Something went wrong. Try again.", "error");
+        } finally {
+          authSubmit.disabled = false;
+        }
+      });
+
+      function handleAuthUser(u) {
+        const validUser = (u && u.is_anonymous !== true) ? u : null;
+        const prevUid = currentUser ? currentUser.id : null;
+        const nextUid = validUser ? validUser.id : null;
+
+        if (prevUid !== nextUid) {
+          closeSocket();
+          feedEl.replaceChildren();
+          editingName = false;
+          displayName = nextUid ? getSavedName(nextUid) : "";
+        }
+
+        currentUser = validUser;
+        syncView();
+      }
+
+      if (!sb) {
+        handleAuthUser(null);
+      } else {
+        sb.auth.getSession().then(({ data }) => {
+          handleAuthUser(data && data.session && data.session.user);
+        }).catch(() => {
+          handleAuthUser(null);
+        });
+
+        sb.auth.onAuthStateChange((event, session) => {
+          handleAuthUser(session && session.user);
+          if (event === "PASSWORD_RECOVERY") openAuth("newpass");
+        });
+      }
+    })();
   </script>
 </body>
 </html>
