@@ -56,8 +56,22 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
       margin-bottom: 16px;
     }
+    .topbar-right { display: flex; align-items: center; gap: 8px; }
+    .back-link {
+      display: inline-block;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--muted);
+      font: 600 0.85rem var(--body);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .back-link:hover { border-color: var(--sun); color: var(--sun); }
     .brand {
       display: flex;
       align-items: center;
@@ -305,7 +319,10 @@
         <span class="brand-mark" aria-hidden="true">EA</span>
         <span class="brand-text">Edusphere Academy</span>
       </a>
-      <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+      <div class="topbar-right">
+        <a href="allgames.html" class="back-link">&larr; All games</a>
+        <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+      </div>
     </div>
 
     <div class="notice" id="notice" hidden>
