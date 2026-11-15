@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f5f4ed">
+  <title>Lobby Chat | Edusphere Academy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="theme.js"></script>
+
+  <style>
+    :root {
+      --bg: #f5f4ed;
+      --panel: #fffefa;
+      --panel-hi: #eeefe7;
+      --line: #d9ddd3;
+      --text: #24352f;
+      --muted: #63716a;
+      --sun: #376b56;
+      --radius: 9px;
+      --display: "Lora", Georgia, serif;
+      --body: "Source Sans 3", "Segoe UI", sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--body);
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      height: 85vh;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      font-family: var(--display);
+      font-size: 1rem;
+      color: #fffefa;
+      background: var(--sun);
+      border-radius: 7px;
+    }
+    .brand-text { font-family: var(--display); font-size: 1.1rem; font-weight: 600; }
+
+    /* Chat Window Container */
+    .chat-container {
+      flex: 1;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(36,53,47,.07);
+    }
+
+    .chat-header {
+      background: var(--panel-hi);
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-title { font-family: var(--display); font-weight: 600; font-size: 1.1rem; margin: 0; }
+    .chat-status { font-size: 0.85rem; color: var(--muted); }
+
+    /* Messages Feed */
+    .chat-feed {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .msg {
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      background: var(--panel-hi);
+      border: 1px solid var(--line);
+      align-self: flex-start;
+    }
+    .msg.mine {
+      background: var(--sun);
+      color: #fffefa;
+      border-color: transparent;
+      align-self: flex-end;
+    }
+
+    .msg-sender {
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: var(--sun);
+    }
+    .msg.mine .msg-sender { display: none; }
+
+    .msg-time {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      float: right;
+      margin-left: 10px;
+      margin-top: 4px;
+    }
+
+    /* Input Footer */
+    .chat-footer {
+      padding: 12px;
+      background: var(--panel-hi);
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 10px;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font: inherit;
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+    }
+    .chat-input:focus { border-color: var(--sun); }
+    .btn {
+      padding: 10px 20px;
+      border: 0;
+      border-radius: 7px;
+      cursor: pointer;
+      font: 700 0.95rem var(--body);
+      color: #fffefa;
+      background: var(--sun);
+      transition: background .15s;
+    }
+    .btn:hover { opacity: 0.9; }
+  </style>
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+  <div class="page">
+    <div class="topbar">
+      <a href="/index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">EA</span>
+        <span class="brand-text">Edusphere Academy</span>
+      </a>
+      <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+    </div>
+
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2 class="chat-title">Student Lobby Chat</h2>
+        <span class="chat-status" id="chat-status">Connecting...</span>
+      </div>
+
+      <div class="chat-feed" id="chat-feed"></div>
+
+      <form class="chat-footer" id="chat-form">
+        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." autocomplete="off" />
+        <button type="submit" class="btn">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ Replace with your live Cloudflare Worker wss:// URL
+    const WS_URL = 'wss://YOUR-WORKER-SUBDOMAIN.workers.dev';
+
+    let myId = sessionStorage.getItem('edusphere_chat_id');
+    if (!myId) {
+      myId = 'student_' + Math.random().toString(36).substring(2, 8);
+      sessionStorage.setItem('edusphere_chat_id', myId);
+    }
+    const myName = 'Student_' + myId.slice(-4).toUpperCase();
+
+    const feedEl = document.getElementById('chat-feed');
+    const statusEl = document.getElementById('chat-status');
+    const formEl = document.getElementById('chat-form');
+    const inputEl = document.getElementById('chat-input');
+
+    const socket = new WebSocket(WS_URL);
+
+    socket.addEventListener('open', () => {
+      statusEl.textContent = 'Live';
+    });
+
+    socket.addEventListener('close', () => {
+      statusEl.textContent = 'Disconnected';
+    });
+
+    socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === 'history') {
+        feedEl.innerHTML = '';
+        data.messages.forEach(msg => appendMessage(msg));
+      } else if (data.type === 'message') {
+        appendMessage(data.message);
+      }
+    });
+
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = inputEl.value.trim();
+      if (!text || socket.readyState !== WebSocket.OPEN) return;
+
+      socket.send(JSON.stringify({
+        senderId: myId,
+        senderName: myName,
+        text: text
+      }));
+
+      inputEl.value = '';
+    });
+
+    function appendMessage(msg) {
+      const isMe = msg.senderId === myId;
+      const bubble = document.createElement('div');
+      bubble.className = `msg ${isMe ? 'mine' : ''}`;
+
+      const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      bubble.innerHTML = `
+        <div class="msg-sender">${escapeHtml(msg.senderName)}</div>
+        <div>${escapeHtml(msg.text)}</div>
+        <span class="msg-time">${time}</span>
+      `;
+
+      feedEl.appendChild(bubble);
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
