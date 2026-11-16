@@ -81,7 +81,7 @@
       width: 100%;
       max-width: 1000px;
       margin: 0 auto;
-      padding: 24px clamp(16px, 4vw, 32px) 110px;
+      padding: 24px clamp(16px, 4vw, 32px) 48px;
     }
 
     /* ---- Top bar ---- */
@@ -893,7 +893,12 @@
       }
     }
 
-    /* ---- Voice chat bar (always visible at bottom) ---- */
+    /*
+    =========================================================
+    VOICE CHAT CSS — COMMENTED OUT (disabled)
+    Remove the surrounding comment markers to re-enable.
+    =========================================================
+
     #voice-bar {
       position: fixed;
       bottom: 0;
@@ -953,6 +958,11 @@
       #party-code { width: 100px; }
       #voice-status { display: none; }
     }
+
+    =========================================================
+    END VOICE CHAT CSS
+    =========================================================
+    */
   </style>
 
   <link rel="stylesheet" href="theme.css">
@@ -1917,7 +1927,11 @@
     document.addEventListener("DOMContentLoaded", setupAuth);
   </script>
 
-  <!-- Voice chat bar -->
+  <!-- =========================================================
+       VOICE CHAT HTML + SCRIPT — COMMENTED OUT (disabled)
+       Remove the surrounding HTML comment markers to re-enable.
+       =========================================================
+
   <div id="voice-bar" role="region" aria-label="Voice chat">
     <div class="voice-field">
       <label for="party-code">Party code</label>
@@ -2158,6 +2172,11 @@
     }
   })();
   </script>
+
+       =========================================================
+       END VOICE CHAT
+       =========================================================
+  -->
 
 </body>
 </html>
