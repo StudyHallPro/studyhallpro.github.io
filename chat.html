@@ -92,7 +92,6 @@
     }
     .brand-text { font-family: var(--display); font-size: 1.1rem; font-weight: 600; }
 
-    /* Chat Window Container */
     .chat-container {
       flex: 1;
       background: var(--panel);
@@ -139,7 +138,6 @@
     }
     .btn-ghost:hover { border-color: var(--sun); color: var(--sun); opacity: 1; }
 
-    /* Sign-in gate */
     .chat-body {
       flex: 1;
       min-height: 0;
@@ -208,7 +206,6 @@
       cursor: pointer;
     }
 
-    /* Messages Feed */
     .chat-feed {
       flex: 1;
       padding: 16px;
@@ -251,7 +248,6 @@
       margin-top: 4px;
     }
 
-    /* Input Footer */
     .chat-footer {
       padding: 12px;
       background: var(--panel-hi);
@@ -284,7 +280,6 @@
     .btn:hover { opacity: 0.9; }
     .btn-small { padding: 7px 12px; font-size: 0.85rem; }
 
-    /* Notifications notice */
     .notice {
       display: flex;
       gap: 12px;
@@ -320,6 +315,7 @@
         <span class="brand-text">Edusphere Academy</span>
       </a>
       <div class="topbar-right">
+        <a href="friends.html" class="back-link">Friends</a>
         <a href="allgames.html" class="back-link">&larr; All games</a>
         <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
       </div>
@@ -383,20 +379,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
-    // ===== SETTINGS: fill these in =====
-    // Your Cloudflare Worker address (must start with wss:// and end with /)
     const WS_URL = 'wss://talk.foundersunset.workers.dev/';
-    // PUBLIC push key from generate-keys.html (safe to put here)
     const VAPID_PUBLIC_KEY = 'BKM1snz6eUqiAhmJ5JCJLh98UFQNKVhw_WV8d9VctB3ZefQMyvZpGt7_qKUKYCqplw4GBcIwwPUZ_xLQwXN5aVk';
-    // Supabase project used for accounts (same project as allgames.html / cloudsave.js).
-    // The anon/publishable key is meant for the browser; protect data with RLS.
     const SUPA_URL = 'https://yerxoikcfeulgnrdjkyc.supabase.co';
     const SUPA_KEY = 'sb_publishable_QX-XZw_wiRj_u0NXHGRkOA_Pq7rGK-p';
-    // ===================================
 
-    // ---------- Account (Supabase) ----------
-    // Same project as the rest of Edusphere Academy (see allgames.html).
-    const AUTH = { url: SUPA_URL, key: SUPA_KEY, lib: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" };
+    const AUTH = { url: SUPA_URL, key: SUPA_KEY };
     const configured = SUPA_URL.indexOf("YOUR_") !== 0 && SUPA_KEY.indexOf("YOUR_") !== 0;
 
     const feedEl = document.getElementById('chat-feed');
@@ -423,16 +411,13 @@
     const noticeEnableEl = document.getElementById('notice-enable');
     const noticeCloseEl = document.getElementById('notice-close');
 
-    // Identity comes from the signed-in account only. There is no name input anywhere:
-    // the display name is the email the account was created with, so it cannot be
-    // changed to impersonate someone else.
     let currentUser = null;
-    let myId = null;    // account id
-    let myName = null;  // account email
+    let myId = null;
+    let myName = null;
 
     let socket = null;
     let retryDelay = 1000;
-    let pendingSub = null; // push subscription waiting to be sent to the server
+    let pendingSub = null;
 
     const sb = (configured && window.supabase && window.supabase.createClient)
       ? window.supabase.createClient(AUTH.url, AUTH.key)
@@ -548,7 +533,6 @@
       updateNotice();
     }
 
-    // ---------- Chat connection ----------
     function connect() {
       if (!currentUser) return;
 
@@ -558,12 +542,12 @@
       socket.addEventListener('open', () => {
         statusEl.textContent = 'Live';
         retryDelay = 1000;
-        sendSubscription(); // re-register for notifications on every connect
+        sendSubscription();
       });
 
       socket.addEventListener('close', () => {
         socket = null;
-        if (!currentUser) return; // signed out on purpose: do not reconnect
+        if (!currentUser) return;
         statusEl.textContent = 'Reconnecting...';
         setTimeout(() => { if (currentUser && !socket) connect(); }, retryDelay);
         retryDelay = Math.min(retryDelay * 2, 10000);
@@ -596,7 +580,7 @@
 
       if (!socket || socket.readyState !== WebSocket.OPEN) {
         statusEl.textContent = 'Not connected, retrying...';
-        return; // keep the text in the box so it isn't lost
+        return;
       }
 
       socket.send(JSON.stringify({ senderId: myId, senderName: myName, text: text }));
@@ -630,7 +614,6 @@
       return div.innerHTML;
     }
 
-    // ---------- Sign-in form ----------
     authSwitchEl.addEventListener('click', () => {
       setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
     });
@@ -700,7 +683,6 @@
       applyUser(null);
     });
 
-    // ---------- Notifications ----------
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
@@ -723,12 +705,12 @@
     function noticeDismissedRecently() {
       try {
         const t = Number(localStorage.getItem('edusphere_notice_dismissed') || 0);
-        return Date.now() - t < 7 * 24 * 60 * 60 * 1000; // hide for 7 days
+        return Date.now() - t < 7 * 24 * 60 * 60 * 1000;
       } catch (e) { return false; }
     }
 
-    let deferredInstall = null; // Android/desktop "install app" prompt
-    let actionMode = null;      // 'install' or 'enable'
+    let deferredInstall = null;
+    let actionMode = null;
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -749,23 +731,11 @@
     }
 
     function updateNotice() {
-      // Not signed in: no chat, so nothing to notify about
-      if (!currentUser) {
-        noticeEl.hidden = true;
-        return;
-      }
-      // Already done: notifications are on
-      if (pushSupported && Notification.permission === 'granted') {
-        noticeEl.hidden = true;
-        return;
-      }
-      if (noticeDismissedRecently()) {
-        noticeEl.hidden = true;
-        return;
-      }
+      if (!currentUser) { noticeEl.hidden = true; return; }
+      if (pushSupported && Notification.permission === 'granted') { noticeEl.hidden = true; return; }
+      if (noticeDismissedRecently()) { noticeEl.hidden = true; return; }
 
       if (isStandalone) {
-        // Installed as an app
         if (!pushSupported) {
           showNotice('Notifications are not available on this device.', null, null);
         } else if (Notification.permission === 'denied') {
@@ -776,7 +746,6 @@
         return;
       }
 
-      // Not installed yet
       if (isIOS) {
         showNotice('Get chat notifications: tap the Share button, then "Add to Home Screen". Open the app from your home screen.', null, null);
       } else if (deferredInstall) {
@@ -817,7 +786,7 @@
           await deferredInstall.userChoice;
           deferredInstall = null;
         } else if (actionMode === 'enable') {
-          const permission = await Notification.requestPermission(); // must come from a tap
+          const permission = await Notification.requestPermission();
           if (permission === 'granted') await subscribeToPush();
         }
       } catch (err) {
@@ -831,13 +800,11 @@
       noticeEl.hidden = true;
     });
 
-    // On load: if already allowed and signed in, make sure we are subscribed; otherwise show the notice
     if (currentUser && pushSupported && Notification.permission === 'granted') {
       subscribeToPush().catch((err) => console.error(err));
     }
     updateNotice();
 
-    // ---------- Start ----------
     setAuthMode('signin');
     showGate();
 
@@ -866,7 +833,6 @@
         'error'
       );
     }
-
   </script>
 </body>
 </html>
