@@ -238,6 +238,50 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     }
+
+
+    /* Banner ads use the same normal-flow placements as allgames.html. */
+    .ad-section,
+    .banner-ad-section,
+    .rectangle-ad-section {
+      margin: 0 0 28px;
+      text-align: center;
+    }
+    .ad-label {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .ad-slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: var(--ad-width, 728px);
+      min-height: var(--ad-height, 90px);
+      margin: 0 auto;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .ad-slot--320x50 { --ad-width: 320px; --ad-height: 50px; }
+    .ad-slot--468x60 { --ad-width: 468px; --ad-height: 60px; }
+    .ad-slot--728x90 { --ad-width: 728px; --ad-height: 90px; }
+    .ad-slot--300x250 { --ad-width: 300px; --ad-height: 250px; }
+    .ad-slot > * { max-width: 100% !important; }
+    .ad-slot iframe {
+      position: static !important;
+      display: block;
+      max-width: 100% !important;
+      height: auto !important;
+      margin: 0 auto;
+      border: 0;
+      transform: none !important;
+    }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -254,6 +298,17 @@
       <a href="/allgames.html" class="btn btn--alt">All games</a>
     </div>
 
+    <!-- Banner 1: 728x90 -->
+    <section class="ad-section" id="banner-ad" aria-label="Advertisement">
+      <p class="ad-label">Advertisement</p>
+      <div class="ad-slot ad-slot--728x90" id="leaderboard-ad-slot">
+        <script>
+          atOptions = { 'key' : 'c43a82f1398b372a09d693ec41c5182b', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://bauval.org/22/c43a82f1398b372a09d693ec41c5182b"></script>
+      </div>
+    </section>
+
     <main class="hero">
       <p class="eyebrow">Activity library</p>
       <h1 class="error-code" aria-label="Error 404">404</h1>
@@ -268,11 +323,44 @@
       </div>
     </main>
 
+    <!-- Banner 2: 320x50 -->
+    <section class="rectangle-ad-section" aria-label="Advertisement">
+      <p class="ad-label">Advertisement</p>
+      <div class="ad-slot ad-slot--320x50" id="bauval-320x50">
+        <script>
+          atOptions = { 'key' : '049d96f182d4f5c7d51cfce79bd22181', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+        </script>
+        <script src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+      </div>
+    </section>
+
     <!-- Suggestions (filled from script.js; hidden if it can't load) -->
     <section class="more-games" id="more-games" hidden>
       <h2>Try one of these</h2>
       <p class="section-lead">A few games while you're here.</p>
       <div class="game-grid" id="game-grid"></div>
+    </section>
+
+    <!-- Banner 3: 468x60 -->
+    <section class="banner-ad-section" aria-label="Advertisement">
+      <p class="ad-label">Advertisement</p>
+      <div class="ad-slot ad-slot--468x60" id="bauval-468x60">
+        <script>
+          atOptions = { 'key' : 'a63315b56070b2858b3ebf1bf5e5b2ba', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+        </script>
+        <script src="https://bauval.org/22/a63315b56070b2858b3ebf1bf5e5b2ba"></script>
+      </div>
+    </section>
+
+    <!-- Banner 4: 300x250 -->
+    <section class="rectangle-ad-section" aria-label="Advertisement">
+      <p class="ad-label">Advertisement</p>
+      <div class="ad-slot ad-slot--300x250" id="bauval-300x250">
+        <script>
+          atOptions = { 'key' : '5b4efe045f4ae78dd30e7fc61e81e871', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+        </script>
+        <script src="https://bauval.org/22/5b4efe045f4ae78dd30e7fc61e81e871"></script>
+      </div>
     </section>
 
     <footer class="footer">
