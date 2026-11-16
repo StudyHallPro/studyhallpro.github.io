@@ -912,18 +912,10 @@
       font-family: var(--body);
       color: var(--text);
     }
+    #voice-bar, #voice-bar * { touch-action: manipulation; }
 
-    #voice-bar .voice-field {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    #voice-bar label {
-      font-size: .85rem;
-      font-weight: 600;
-      color: var(--muted);
-    }
+    #voice-bar .voice-field { display: flex; align-items: center; gap: 6px; }
+    #voice-bar label { font-size: .85rem; font-weight: 600; color: var(--muted); }
 
     #party-code {
       width: 130px;
@@ -949,17 +941,12 @@
     }
     #voice-bar .vbtn:hover { background: #28523f; }
     #voice-bar .vbtn:disabled { opacity: .6; cursor: wait; }
-
     #voice-bar .vbtn--join { background: var(--sun); }
     #voice-bar .vbtn--mute { background: var(--cyan); }
     #voice-bar .vbtn--mute.is-muted { background: #c9a227; color: #24352f; }
     #voice-bar .vbtn--leave { background: var(--pink); }
 
-    #voice-status {
-      font-size: .85rem;
-      color: var(--muted);
-      min-width: 110px;
-    }
+    #voice-status { font-size: .85rem; color: var(--muted); min-width: 110px; }
 
     @media (max-width: 560px) {
       #voice-bar { gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); }
@@ -1963,6 +1950,7 @@
     let speakingFrames = 0;
     let currentRoom = "";
     let cleaningUp = false;
+    let userLeft = false;
 
     const joinBtn = document.getElementById('join-btn');
     const muteBtn = document.getElementById('mute-btn');
@@ -1993,23 +1981,31 @@
       const room = codeInput.value.trim();
       if (!room) { alert("Enter a party code first!"); return; }
       currentRoom = room;
+      userLeft = false;
 
       try {
         joinBtn.disabled = true;
         statusEl.textContent = "Connecting...";
 
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        await audioCtx.resume();
         await audioCtx.audioWorklet.addModule(WORKLET_URL);
 
         micStream = await navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
         });
 
+        await audioCtx.resume();
+        console.log("AudioContext state after resume:", audioCtx.state);
+
         ws = new WebSocket(WSS_URL + "?room=" + encodeURIComponent(room));
         ws.binaryType = "arraybuffer";
 
-        ws.onopen = () => {
+        ws.onopen = async () => {
+          if (audioCtx.state === "suspended") {
+            try { await audioCtx.resume(); } catch (_) {}
+          }
+          console.log("AudioContext state at ws.onopen:", audioCtx.state);
+
           startMicStreaming();
           codeInput.style.display = 'none';
           joinBtn.style.display = 'none';
@@ -2031,8 +2027,16 @@
           if (event.data instanceof ArrayBuffer) playPCM(event.data);
         };
 
-        ws.onclose = () => { ws = null; cleanup(); };
-        ws.onerror = () => { ws = null; cleanup(); };
+        ws.onclose = () => {
+          ws = null;
+          if (!userLeft && currentRoom) {
+            statusEl.textContent = "Reconnecting...";
+            setTimeout(() => { if (!userLeft) joinBtn.click(); }, 1500);
+          } else {
+            cleanup();
+          }
+        };
+        ws.onerror = () => {};
       } catch (err) {
         alert("Could not start voice chat: " + err.message);
         cleanup();
@@ -2048,6 +2052,7 @@
         if (isMuted || !ws || ws.readyState !== WebSocket.OPEN) return;
 
         const resampled = resample(ev.data);
+        if (!resampled.length) return;
 
         let sumSq = 0;
         for (let i = 0; i < resampled.length; i++) sumSq += resampled[i] * resampled[i];
@@ -2068,14 +2073,15 @@
       };
 
       muteGain = audioCtx.createGain();
-      muteGain.gain.value = 0;
+      muteGain.gain.value = 0.001;
+
       sourceNode.connect(workletNode);
       workletNode.connect(muteGain);
       muteGain.connect(audioCtx.destination);
     }
 
     function playPCM(arrayBuffer) {
-      if (!audioCtx) return;
+      if (!audioCtx || audioCtx.state !== "running") return;
       const int16 = new Int16Array(arrayBuffer);
       const float32 = new Float32Array(int16.length);
       for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768;
@@ -2101,6 +2107,7 @@
     });
 
     leaveBtn.addEventListener('click', () => {
+      userLeft = true;
       if (ws) { try { ws.close(); } catch (_) {} ws = null; }
       cleanup();
     });
@@ -2110,6 +2117,16 @@
         audioCtx.resume().catch(() => {});
       }
     });
+    window.addEventListener('focus', () => {
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+    });
+    document.addEventListener('touchstart', () => {
+      if (audioCtx && audioCtx.state === 'suspended' && ws) {
+        audioCtx.resume().catch(() => {});
+      }
+    }, { passive: true });
 
     function cleanup() {
       if (cleaningUp) return;
@@ -2126,7 +2143,7 @@
       nextPlayTime = 0;
       speakingFrames = 0;
       isMuted = false;
-      currentRoom = "";
+      if (!userLeft) currentRoom = "";
 
       codeInput.style.display = 'inline-block';
       joinBtn.style.display = 'inline-block';
