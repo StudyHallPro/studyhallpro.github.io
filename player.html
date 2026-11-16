@@ -914,6 +914,7 @@
         </button>
 
         <a href="allgames.html" class="btn btn--alt">&larr; All games</a>
+        <a class="btn btn--alt" id="direct-play-btn" hidden target="_blank" rel="noopener noreferrer">Direct Play</a>
         <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
         <button type="button" class="btn" id="fs-btn">Fullscreen</button>
         <button type="button" class="btn btn--pink is-cta" id="auth-toggle">Sign in</button>
@@ -1264,6 +1265,9 @@
       }
 
       const gameUrl = "/games/" + encodeURIComponent(gameId) + "/index.html";
+      const directPlayButton = document.getElementById("direct-play-btn");
+      directPlayButton.href = gameUrl;
+      directPlayButton.hidden = false;
 
       heading.textContent = gameTitle;
       document.title = gameTitle + " | Edusphere Academy";
