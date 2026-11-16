@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f5f4ed">
+  <title>Friends | Edusphere Academy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="theme.js"></script>
+
+  <style>
+    :root {
+      --bg: #f5f4ed;
+      --panel: #fffefa;
+      --panel-hi: #eeefe7;
+      --line: #d9ddd3;
+      --text: #24352f;
+      --muted: #63716a;
+      --sun: #376b56;
+      --danger: #a33a2c;
+      --radius: 9px;
+      --display: "Lora", Georgia, serif;
+      --body: "Source Sans 3", "Segoe UI", sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--body);
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+    }
+    .page { width: 100%; max-width: 720px; display: flex; flex-direction: column; height: 85vh; }
+
+    .topbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .topbar-right { display: flex; align-items: center; gap: 8px; }
+    .back-link {
+      display: inline-block; padding: 7px 12px; border: 1px solid var(--line);
+      border-radius: 7px; color: var(--muted); font: 600 .85rem var(--body); text-decoration: none;
+    }
+    .back-link:hover { border-color: var(--sun); color: var(--sun); }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--text); text-decoration: none; }
+    .brand-mark {
+      display: grid; place-items: center; width: 40px; height: 40px;
+      font-family: var(--display); font-size: 1rem; color: #fffefa;
+      background: var(--sun); border-radius: 7px;
+    }
+    .brand-text { font-family: var(--display); font-size: 1.1rem; font-weight: 600; }
+
+    .friends-container {
+      flex: 1; background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: 0 4px 14px rgba(36,53,47,.07);
+    }
+
+    /* Auth gate */
+    .auth-gate {
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      padding: 28px 24px; overflow-y: auto;
+    }
+    .auth-gate h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 6px; }
+    .auth-gate p { margin: 0 0 18px; font-size: .9rem; line-height: 1.45; color: var(--muted); }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: .8rem; font-weight: 600; margin-bottom: 4px; color: var(--muted); }
+    .input {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--line);
+      border-radius: 7px; font: inherit; background: var(--panel); color: var(--text); outline: none;
+    }
+    .input:focus { border-color: var(--sun); }
+    .btn {
+      padding: 10px 20px; border: 0; border-radius: 7px; cursor: pointer;
+      font: 700 .95rem var(--body); color: #fffefa; background: var(--sun);
+    }
+    .btn:hover { opacity: .9; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-small { padding: 7px 12px; font-size: .85rem; }
+    .btn-danger { background: var(--danger); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+    .btn-ghost:hover { border-color: var(--sun); color: var(--sun); }
+    .link-btn {
+      background: none; border: 0; padding: 0; font: inherit; font-size: .85rem;
+      color: var(--sun); text-decoration: underline; cursor: pointer;
+    }
+    .status { min-height: 1.2em; margin: 4px 0 10px; font-size: .85rem; color: var(--muted); }
+    .status.is-error { color: var(--danger); }
+
+    /* Tabs */
+    .tabs { display: flex; background: var(--panel-hi); border-bottom: 1px solid var(--line); flex-shrink: 0; }
+    .tab {
+      flex: 1; padding: 14px 12px; border: 0; background: none; cursor: pointer;
+      font: 600 .95rem var(--body); color: var(--muted); position: relative;
+      border-bottom: 3px solid transparent;
+    }
+    .tab.is-active { color: var(--text); border-bottom-color: var(--sun); }
+    .tab .badge {
+      display: inline-block; margin-left: 6px; padding: 1px 6px;
+      background: var(--sun); color: #fffefa; border-radius: 999px;
+      font-size: .7rem; font-weight: 700;
+    }
+    .tab .badge[hidden] { display: none; }
+
+    /* Content */
+    .content { flex: 1; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; }
+    .content[hidden] { display: none; }
+
+    /* Friend list */
+    .friend-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; border-bottom: 1px solid var(--line);
+      cursor: pointer; text-align: left; width: 100%; background: none; border-left: 0; border-right: 0; border-top: 0;
+      font: inherit; color: inherit;
+    }
+    .friend-row:hover { background: var(--panel-hi); }
+    .avatar {
+      display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px;
+      border-radius: 50%; background: var(--sun); color: #fffefa;
+      font: 600 .95rem var(--display);
+    }
+    .friend-info { flex: 1; min-width: 0; }
+    .friend-name {
+      display: block; font-weight: 700; color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .friend-preview {
+      display: block; font-size: .82rem; color: var(--muted);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .unread {
+      flex-shrink: 0; min-width: 22px; height: 22px; padding: 0 6px;
+      background: var(--sun); color: #fffefa; border-radius: 999px;
+      font-size: .75rem; font-weight: 700; display: grid; place-items: center;
+    }
+    .unread[hidden] { display: none; }
+
+    .empty {
+      padding: 32px 24px; text-align: center; color: var(--muted); font-size: .9rem;
+    }
+
+    /* Requests */
+    .request-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; border-bottom: 1px solid var(--line);
+    }
+    .request-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .section-title {
+      padding: 14px 18px 6px; font-size: .8rem; font-weight: 700;
+      color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+    }
+
+    /* Search */
+    .search-wrap { padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .search-result {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; border-bottom: 1px solid var(--line);
+    }
+
+    /* DM view */
+    .dm-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; background: var(--panel-hi);
+      border-bottom: 1px solid var(--line);
+    }
+    .dm-back {
+      background: none; border: 0; cursor: pointer;
+      font: 700 1.2rem var(--body); color: var(--muted); padding: 4px 8px;
+    }
+    .dm-back:hover { color: var(--sun); }
+    .dm-title { font-family: var(--display); font-weight: 600; font-size: 1.05rem; }
+
+    .dm-feed {
+      flex: 1; overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column; gap: 8px; min-height: 0;
+    }
+    .msg {
+      max-width: 78%; padding: 8px 12px; border-radius: 10px;
+      font-size: .92rem; line-height: 1.4; word-wrap: break-word;
+      background: var(--panel-hi); align-self: flex-start;
+    }
+    .msg.mine { background: var(--sun); color: #fffefa; align-self: flex-end; }
+    .msg-time { display: block; font-size: .7rem; opacity: .7; margin-top: 2px; }
+
+    .dm-footer {
+      padding: 12px; border-top: 1px solid var(--line); background: var(--panel-hi);
+      display: flex; gap: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .brand-text { display: none; }
+      .tab { font-size: .85rem; padding: 12px 8px; }
+    }
+  </style>
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+  <div class="page">
+    <div class="topbar">
+      <a href="/index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">EA</span>
+        <span class="brand-text">Edusphere Academy</span>
+      </a>
+      <div class="topbar-right">
+        <a href="chat.html" class="back-link">Lobby chat</a>
+        <a href="allgames.html" class="back-link">&larr; All games</a>
+        <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+      </div>
+    </div>
+
+    <div class="friends-container" id="friends-container">
+
+      <!-- Auth gate -->
+      <div class="auth-gate" id="auth-gate">
+        <h3>Sign in to manage friends</h3>
+        <p>You need an Edusphere Academy account to send friend requests and start private chats.</p>
+        <form id="auth-form" novalidate>
+          <div class="field">
+            <label for="auth-email">Email</label>
+            <input type="email" class="input" id="auth-email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="auth-password">Password</label>
+            <input type="password" class="input" id="auth-password" autocomplete="current-password" required>
+          </div>
+          <div class="status" id="auth-status"></div>
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <button type="submit" class="btn" id="auth-submit">Sign in</button>
+            <button type="button" class="link-btn" id="auth-switch">Create an account</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- App -->
+      <div id="app" hidden style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <div class="tabs">
+          <button class="tab is-active" data-tab="friends">Friends<span class="badge" id="tab-friends-badge" hidden></span></button>
+          <button class="tab" data-tab="requests">Requests<span class="badge" id="tab-requests-badge" hidden></span></button>
+          <button class="tab" data-tab="find">Find people</button>
+        </div>
+
+        <!-- Friends tab -->
+        <div class="content" id="tab-friends" style="flex:1;">
+          <div id="friend-list"></div>
+          <div class="empty" id="friends-empty" hidden>You don't have any friends yet. Find someone in the "Find people" tab.</div>
+        </div>
+
+        <!-- Requests tab -->
+        <div class="content" id="tab-requests" hidden>
+          <div class="section-title">Incoming</div>
+          <div id="incoming-list"></div>
+          <div class="empty" id="incoming-empty">No incoming requests.</div>
+
+          <div class="section-title">Sent</div>
+          <div id="outgoing-list"></div>
+          <div class="empty" id="outgoing-empty">No sent requests.</div>
+        </div>
+
+        <!-- Find people tab -->
+        <div class="content" id="tab-find" hidden>
+          <div class="search-wrap">
+            <input type="text" class="input" id="search-input" placeholder="Search by display name..." autocomplete="off">
+          </div>
+          <div id="search-results"></div>
+          <div class="empty" id="search-hint">Type a name to search for people.</div>
+        </div>
+
+        <!-- DM view -->
+        <div class="content" id="dm-view" hidden>
+          <div class="dm-header">
+            <button class="dm-back" id="dm-back" aria-label="Back to friends">&larr;</button>
+            <div class="dm-title" id="dm-title"></div>
+          </div>
+          <div class="dm-feed" id="dm-feed"></div>
+          <form class="dm-footer" id="dm-form">
+            <input type="text" class="input" id="dm-input" placeholder="Type a message..." autocomplete="off" maxlength="1000">
+            <button type="submit" class="btn">Send</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script>
+    // ============ SETTINGS ============
+    const SUPA_URL = 'https://yerxoikcfeulgnrdjkyc.supabase.co';
+    const SUPA_KEY = 'sb_publishable_QX-XZw_wiRj_u0NXHGRkOA_Pq7rGK-p';
+    // ==================================
+
+    const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+    const $ = (id) => document.getElementById(id);
+    const gate = $('auth-gate');
+    const app = $('app');
+    const authForm = $('auth-form');
+    const authEmail = $('auth-email');
+    const authPass = $('auth-password');
+    const authStatus = $('auth-status');
+    const authSubmit = $('auth-submit');
+    const authSwitch = $('auth-switch');
+
+    let me = null;          // { id, display_name }
+    let myProfile = null;
+    let friends = [];       // [{ friendship_id, user_id, display_name }]
+    let incoming = [];      // [{ friendship_id, user_id, display_name }]
+    let outgoing = [];
+    let unreadByUser = {};  // user_id -> count
+    let activeChat = null;  // { user_id, display_name, channel }
+    let inboxChannel = null;
+    let friendsChannel = null;
+
+    let authMode = 'signin';
+
+    // ---------- Auth ----------
+    authSwitch.addEventListener('click', () => {
+      authMode = authMode === 'signin' ? 'signup' : 'signin';
+      authSwitch.textContent = authMode === 'signin' ? 'Create an account' : 'Back to sign in';
+      authSubmit.textContent = authMode === 'signin' ? 'Sign in' : 'Create account';
+      authStatus.textContent = '';
+    });
+
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = authEmail.value.trim();
+      const password = authPass.value;
+      if (!email || password.length < 6) {
+        authStatus.textContent = 'Enter an email and a password of at least 6 characters.';
+        authStatus.classList.add('is-error');
+        return;
+      }
+      authSubmit.disabled = true;
+      authStatus.textContent = 'Working...';
+      authStatus.classList.remove('is-error');
+      try {
+        if (authMode === 'signin') {
+          const { error } = await sb.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+        } else {
+          const { data, error } = await sb.auth.signUp({ email, password });
+          if (error) throw error;
+          if (!data.session) {
+            authStatus.textContent = 'Account created. Check your email to confirm it, then sign in.';
+            authMode = 'signin';
+            authSwitch.textContent = 'Create an account';
+            authSubmit.textContent = 'Sign in';
+          }
+        }
+      } catch (err) {
+        authStatus.textContent = err.message || 'Something went wrong.';
+        authStatus.classList.add('is-error');
+      } finally {
+        authSubmit.disabled = false;
+      }
+    });
+
+    sb.auth.onAuthStateChange((_event, session) => {
+      if (session && session.user) bootFor(session.user);
+      else shutdown();
+    });
+
+    sb.auth.getSession().then(({ data }) => {
+      if (data && data.session && data.session.user) bootFor(data.session.user);
+      else shutdown();
+    });
+
+    function shutdown() {
+      me = null; myProfile = null;
+      friends = []; incoming = []; outgoing = [];
+      unreadByUser = {};
+      if (activeChat) { try { activeChat.channel.unsubscribe(); } catch (_) {} activeChat = null; }
+      if (inboxChannel) { try { inboxChannel.unsubscribe(); } catch (_) {} inboxChannel = null; }
+      if (friendsChannel) { try { friendsChannel.unsubscribe(); } catch (_) {} friendsChannel = null; }
+      app.hidden = true;
+      gate.hidden = false;
+    }
+
+    async function bootFor(user) {
+      me = { id: user.id };
+      gate.hidden = true;
+      app.hidden = false;
+
+      // Ensure profile exists (for pre-existing users)
+      let { data: prof } = await sb.from('profiles').select('*').eq('id', me.id).maybeSingle();
+      if (!prof) {
+        const base = (user.email || 'user').split('@')[0];
+        const { data: created } = await sb.from('profiles').insert({ id: me.id, display_name: base }).select().maybeSingle();
+        prof = created;
+      }
+      myProfile = prof;
+      me.display_name = prof ? prof.display_name : (user.email || 'you');
+
+      await Promise.all([loadFriends(), loadRequests(), loadUnread()]);
+      subscribeInbox();
+      subscribeFriends();
+      switchTab('friends');
+    }
+
+    // ---------- Data ----------
+    async function loadFriends() {
+      const { data: rows } = await sb.from('friendships')
+        .select('id, requester_id, addressee_id, status')
+        .eq('status', 'accepted')
+        .or(`requester_id.eq.${me.id},addressee_id.eq.${me.id}`);
+
+      const otherIds = (rows || []).map(r => r.requester_id === me.id ? r.addressee_id : r.requester_id);
+      const profs = await fetchProfiles(otherIds);
+      friends = (rows || []).map(r => {
+        const otherId = r.requester_id === me.id ? r.addressee_id : r.requester_id;
+        return { friendship_id: r.id, user_id: otherId, display_name: profs[otherId] || 'user' };
+      });
+      friends.sort((a, b) => a.display_name.localeCompare(b.display_name));
+      renderFriends();
+    }
+
+    async function loadRequests() {
+      const { data: inc } = await sb.from('friendships')
+        .select('id, requester_id')
+        .eq('status', 'pending').eq('addressee_id', me.id);
+      const { data: out } = await sb.from('friendships')
+        .select('id, addressee_id')
+        .eq('status', 'pending').eq('requester_id', me.id);
+
+      const incIds = (inc || []).map(r => r.requester_id);
+      const outIds = (out || []).map(r => r.addressee_id);
+      const profs = await fetchProfiles([...incIds, ...outIds]);
+
+      incoming = (inc || []).map(r => ({ friendship_id: r.id, user_id: r.requester_id, display_name: profs[r.requester_id] || 'user' }));
+      outgoing = (out || []).map(r => ({ friendship_id: r.id, user_id: r.addressee_id, display_name: profs[r.addressee_id] || 'user' }));
+      renderRequests();
+    }
+
+    async function loadUnread() {
+      const { data } = await sb.from('private_messages')
+        .select('sender_id')
+        .eq('recipient_id', me.id)
+        .is('read_at', null);
+      unreadByUser = {};
+      (data || []).forEach(m => { unreadByUser[m.sender_id] = (unreadByUser[m.sender_id] || 0) + 1; });
+      renderFriends();
+    }
+
+    async function fetchProfiles(ids) {
+      if (!ids.length) return {};
+      const { data } = await sb.from('profiles').select('id, display_name').in('id', ids);
+      const map = {};
+      (data || []).forEach(p => { map[p.id] = p.display_name; });
+      return map;
+    }
+
+    // ---------- Realtime ----------
+    function subscribeInbox() {
+      inboxChannel = sb.channel('inbox-' + me.id);
+      inboxChannel.on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'private_messages', filter: `recipient_id=eq.${me.id}` },
+        (payload) => {
+          const msg = payload.new;
+          if (!msg) return;
+          if (activeChat && activeChat.user_id === msg.sender_id) {
+            appendMessage(msg, false);
+            markRead(activeChat.user_id);
+          } else {
+            unreadByUser[msg.sender_id] = (unreadByUser[msg.sender_id] || 0) + 1;
+            renderFriends();
+          }
+        }
+      ).subscribe();
+    }
+
+    function subscribeFriends() {
+      friendsChannel = sb.channel('friends-' + me.id);
+      friendsChannel.on('postgres_changes',
+        { event: '*', schema: 'public', table: 'friendships' },
+        () => { loadFriends(); loadRequests(); }
+      ).subscribe();
+    }
+
+    // ---------- Rendering ----------
+    function renderFriends() {
+      const list = $('friend-list');
+      list.innerHTML = '';
+      if (!friends.length) {
+        $('friends-empty').hidden = false;
+        return;
+      }
+      $('friends-empty').hidden = true;
+      friends.forEach(f => {
+        const row = document.createElement('button');
+        row.className = 'friend-row';
+        row.innerHTML = `
+          <span class="avatar">${escapeHtml(f.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="friend-info">
+            <span class="friend-name">${escapeHtml(f.display_name)}</span>
+            <span class="friend-preview">Click to open chat</span>
+          </span>
+          <span class="unread" ${unreadByUser[f.user_id] ? '' : 'hidden'}>${unreadByUser[f.user_id] || ''}</span>
+        `;
+        row.addEventListener('click', () => openChat(f));
+        list.appendChild(row);
+      });
+    }
+
+    function renderRequests() {
+      const incList = $('incoming-list');
+      incList.innerHTML = '';
+      incoming.forEach(r => {
+        const row = document.createElement('div');
+        row.className = 'request-row';
+        row.innerHTML = `
+          <span class="avatar">${escapeHtml(r.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="friend-info"><span class="friend-name">${escapeHtml(r.display_name)}</span></span>
+          <span class="request-actions">
+            <button class="btn btn-small" data-action="accept">Accept</button>
+            <button class="btn btn-small btn-ghost" data-action="decline">Decline</button>
+          </span>
+        `;
+        row.querySelector('[data-action="accept"]').addEventListener('click', () => respondRequest(r.friendship_id, 'accepted'));
+        row.querySelector('[data-action="decline"]').addEventListener('click', () => respondRequest(r.friendship_id, 'declined'));
+        incList.appendChild(row);
+      });
+      $('incoming-empty').hidden = incoming.length > 0;
+
+      const outList = $('outgoing-list');
+      outList.innerHTML = '';
+      outgoing.forEach(r => {
+        const row = document.createElement('div');
+        row.className = 'request-row';
+        row.innerHTML = `
+          <span class="avatar">${escapeHtml(r.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="friend-info"><span class="friend-name">${escapeHtml(r.display_name)}</span></span>
+          <button class="btn btn-small btn-ghost" data-action="cancel">Cancel</button>
+        `;
+        row.querySelector('[data-action="cancel"]').addEventListener('click', () => removeFriendship(r.friendship_id));
+        outList.appendChild(row);
+      });
+      $('outgoing-empty').hidden = outgoing.length > 0;
+
+      updateBadges();
+    }
+
+    function updateBadges() {
+      const reqBadge = $('tab-requests-badge');
+      reqBadge.hidden = incoming.length === 0;
+      reqBadge.textContent = incoming.length;
+    }
+
+    // ---------- Tabs ----------
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(b => b.classList.toggle('is-active', b.dataset.tab === name));
+      ['friends', 'requests', 'find'].forEach(t => {
+        $('tab-' + t).hidden = (t !== name);
+      });
+      $('dm-view').hidden = true;
+      if (name === 'requests') { loadRequests(); }
+    }
+
+    // ---------- Requests ----------
+    async function respondRequest(id, status) {
+      if (status === 'declined') {
+        await removeFriendship(id);
+      } else {
+        const { error } = await sb.from('friendships')
+          .update({ status: 'accepted', updated_at: new Date().toISOString() })
+          .eq('id', id);
+        if (error) alert(error.message);
+        await Promise.all([loadFriends(), loadRequests()]);
+      }
+    }
+
+    async function removeFriendship(id) {
+      const { error } = await sb.from('friendships').delete().eq('id', id);
+      if (error) alert(error.message);
+      await Promise.all([loadFriends(), loadRequests()]);
+    }
+
+    // ---------- Search ----------
+    let searchTimer = null;
+    $('search-input').addEventListener('input', (e) => {
+      clearTimeout(searchTimer);
+      const q = e.target.value.trim();
+      if (!q) {
+        $('search-results').innerHTML = '';
+        $('search-hint').hidden = false;
+        return;
+      }
+      $('search-hint').hidden = true;
+      searchTimer = setTimeout(() => runSearch(q), 250);
+    });
+
+    async function runSearch(q) {
+      const { data, error } = await sb.from('profiles')
+        .select('id, display_name')
+        .ilike('display_name', '%' + q + '%')
+        .neq('id', me.id)
+        .limit(20);
+      const list = $('search-results');
+      list.innerHTML = '';
+      if (error) { list.textContent = error.message; return; }
+      if (!data || !data.length) {
+        list.innerHTML = '<div class="empty">No matches.</div>';
+        return;
+      }
+      const friendIds = new Set(friends.map(f => f.user_id));
+      const incomingIds = new Set(incoming.map(r => r.user_id));
+      const outgoingIds = new Set(outgoing.map(r => r.user_id));
+
+      data.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'search-result';
+        let action = '<button class="btn btn-small" data-act="add">Add friend</button>';
+        if (friendIds.has(p.id)) action = '<span style="color:var(--muted); font-size:.85rem;">Already friends</span>';
+        else if (outgoingIds.has(p.id)) action = '<span style="color:var(--muted); font-size:.85rem;">Request sent</span>';
+        else if (incomingIds.has(p.id)) action = '<span style="color:var(--muted); font-size:.85rem;">Pending</span>';
+        row.innerHTML = `
+          <span class="avatar">${escapeHtml(p.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="friend-info"><span class="friend-name">${escapeHtml(p.display_name)}</span></span>
+          ${action}
+        `;
+        const btn = row.querySelector('[data-act="add"]');
+        if (btn) btn.addEventListener('click', () => sendRequest(p.id));
+        list.appendChild(row);
+      });
+    }
+
+    async function sendRequest(otherId) {
+      const { error } = await sb.from('friendships').insert({
+        requester_id: me.id,
+        addressee_id: otherId,
+        status: 'pending'
+      });
+      if (error) alert(error.message);
+      await loadRequests();
+      const q = $('search-input').value.trim();
+      if (q) runSearch(q);
+    }
+
+    // ---------- Chat ----------
+    async function openChat(friend) {
+      activeChat = { user_id: friend.user_id, display_name: friend.display_name, channel: null };
+      $('tab-friends').hidden = true;
+      $('tab-requests').hidden = true;
+      $('tab-find').hidden = true;
+      $('dm-view').hidden = false;
+      $('dm-title').textContent = friend.display_name;
+      $('dm-feed').innerHTML = '';
+
+      // Load history (last 100)
+      const { data: msgs } = await sb.from('private_messages')
+        .select('*')
+        .or(`and(sender_id.eq.${me.id},recipient_id.eq.${friend.user_id}),and(sender_id.eq.${friend.user_id},recipient_id.eq.${me.id})`)
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      (msgs || []).forEach(m => appendMessage(m, false));
+      $('dm-feed').scrollTop = $('dm-feed').scrollHeight;
+
+      // Mark unread as read
+      await markRead(friend.user_id);
+
+      // Realtime for new messages from this friend only
+      // (inboxChannel already handles appending if this chat is active)
+    }
+
+    async function markRead(friendId) {
+      delete unreadByUser[friendId];
+      renderFriends();
+      await sb.from('private_messages')
+        .update({ read_at: new Date().toISOString() })
+        .eq('recipient_id', me.id)
+        .eq('sender_id', friendId)
+        .is('read_at', null);
+    }
+
+    function appendMessage(msg, scroll) {
+      const mine = msg.sender_id === me.id;
+      const div = document.createElement('div');
+      div.className = 'msg' + (mine ? ' mine' : '');
+      const when = new Date(msg.created_at);
+      const time = isNaN(when.getTime()) ? '' :
+        when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      div.innerHTML = `${escapeHtml(msg.body)}<span class="msg-time">${time}</span>`;
+      $('dm-feed').appendChild(div);
+      if (scroll !== false) $('dm-feed').scrollTop = $('dm-feed').scrollHeight;
+    }
+
+    $('dm-back').addEventListener('click', () => {
+      activeChat = null;
+      $('dm-view').hidden = true;
+      switchTab('friends');
+    });
+
+    $('dm-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!activeChat) return;
+      const input = $('dm-input');
+      const body = input.value.trim();
+      if (!body) return;
+      input.value = '';
+      const { data, error } = await sb.from('private_messages').insert({
+        sender_id: me.id,
+        recipient_id: activeChat.user_id,
+        body
+      }).select().single();
+      if (error) { alert(error.message); return; }
+      appendMessage(data, true);
+    });
+
+    // ---------- Helpers ----------
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = String(str);
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>
