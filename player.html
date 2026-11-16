@@ -915,7 +915,6 @@
 
         <a href="allgames.html" class="btn btn--alt">&larr; All games</a>
         <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
-        <a href="#" class="btn btn--alt" id="direct-play-btn" hidden>Direct play</a>
         <button type="button" class="btn" id="fs-btn">Fullscreen</button>
         <button type="button" class="btn btn--pink is-cta" id="auth-toggle">Sign in</button>
       </div>
@@ -938,7 +937,7 @@
             'params' : {}
           };
         </script>
-        <script async src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+        <script src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
       </div>
     </div>
 
@@ -1045,7 +1044,7 @@
     <section class="play-help" aria-labelledby="play-help-title">
       <h2 id="play-help-title">Having trouble getting started?</h2>
       <p>Wait for the game's opening screen and look there for controls or a tutorial. Controls are set by each game, so keyboard and touch support can differ. The fullscreen button enlarges the play area; it does not change how a game is controlled.</p>
-      <p>If the play area stays blank, check your connection and try reloading the page once, or try the Direct play button, which opens the game on its own page. Some titles are hosted by third parties and may occasionally be unavailable. Visit the <a href="game-guide.html">game guide</a> for tips on several titles, or return to <a href="allgames.html">all games</a> to choose another.</p>
+      <p>If the play area stays blank, check your connection and try reloading the page once. Some titles are hosted by third parties and may occasionally be unavailable. Visit the <a href="game-guide.html">game guide</a> for tips on several titles, or return to <a href="allgames.html">all games</a> to choose another.</p>
     </section>
 
     <footer class="footer">
@@ -1255,12 +1254,10 @@
       const titleBlock = document.getElementById("title-block");
       const errorMsg = document.getElementById("error-msg");
       const frame = document.getElementById("game-frame");
-      const directBtn = document.getElementById("direct-play-btn");
 
       if (!isValidId) {
         container.hidden = true;
         titleBlock.hidden = true;
-        directBtn.hidden = true;
         errorMsg.hidden = false;
         document.title = "Game not found | Edusphere Academy";
         return;
@@ -1272,10 +1269,6 @@
       document.title = gameTitle + " | Edusphere Academy";
       frame.title = gameTitle;
       frame.src = gameUrl;
-
-      // Direct play: open the game's own index.html instead of the iframe
-      directBtn.href = gameUrl;
-      directBtn.hidden = false;
 
       trackCurrentGame();
     }
