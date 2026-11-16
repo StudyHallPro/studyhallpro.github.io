@@ -67,6 +67,7 @@
       flex: 1; display: flex; flex-direction: column; justify-content: center;
       padding: 28px 24px; overflow-y: auto;
     }
+    .auth-gate[hidden] { display: none; }
     .auth-gate h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 6px; }
     .auth-gate p { margin: 0 0 18px; font-size: .9rem; line-height: 1.45; color: var(--muted); }
     .field { margin-bottom: 12px; }
@@ -304,12 +305,15 @@
     let inboxChannel = null;
     let friendsChannel = null;
     let authMode = 'signin';
+    let bootedUserId = null;
 
+    // ---------- Auth form ----------
     authSwitch.addEventListener('click', () => {
       authMode = authMode === 'signin' ? 'signup' : 'signin';
       authSwitch.textContent = authMode === 'signin' ? 'Create an account' : 'Back to sign in';
       authSubmit.textContent = authMode === 'signin' ? 'Sign in' : 'Create account';
       authStatus.textContent = '';
+      authStatus.classList.remove('is-error');
     });
 
     authForm.addEventListener('submit', async (e) => {
@@ -346,99 +350,187 @@
       }
     });
 
+    // ---------- Auth state (single source of truth) ----------
     sb.auth.onAuthStateChange((_event, session) => {
-      if (session && session.user) bootFor(session.user);
-      else shutdown();
+      if (session && session.user) {
+        bootFor(session.user);
+      } else {
+        shutdown();
+      }
     });
 
-    sb.auth.getSession().then(({ data }) => {
-      if (data && data.session && data.session.user) bootFor(data.session.user);
-      else shutdown();
-    });
+    // ---------- Boot / shutdown ----------
+    async function bootFor(user) {
+      if (!user || !user.id) return;
+      if (bootedUserId === user.id) return;
+      bootedUserId = user.id;
+
+      me = { id: user.id, display_name: user.email || 'you' };
+
+      // Show the app immediately so we're not stuck on the gate
+      // while network calls run.
+      gate.hidden = true;
+      app.hidden = false;
+
+      // Load or create profile
+      try {
+        let { data: prof, error: profErr } = await sb.from('profiles')
+          .select('id, display_name')
+          .eq('id', me.id)
+          .maybeSingle();
+
+        if (profErr) console.warn('Profile read failed:', profErr.message);
+
+        if (!prof) {
+          const base = (user.email || 'user').split('@')[0];
+          const { data: created, error: insErr } = await sb.from('profiles')
+            .insert({ id: me.id, display_name: base })
+            .select('id, display_name')
+            .maybeSingle();
+          if (insErr) console.warn('Profile create failed:', insErr.message);
+          prof = created;
+        }
+
+        if (prof && prof.display_name) me.display_name = prof.display_name;
+      } catch (err) {
+        console.warn('Profile boot error:', err);
+      }
+
+      // Load data — each call is independently error-tolerant
+      await Promise.allSettled([
+        loadFriends(),
+        loadRequests(),
+        loadUnread()
+      ]);
+
+      // Subscribe to realtime — safe to try even if data load partially failed
+      try { subscribeInbox(); } catch (err) { console.warn('Inbox subscribe failed:', err); }
+      try { subscribeFriends(); } catch (err) { console.warn('Friends subscribe failed:', err); }
+
+      switchTab('friends');
+    }
 
     function shutdown() {
+      bootedUserId = null;
       me = null;
-      friends = []; incoming = []; outgoing = [];
+      friends = [];
+      incoming = [];
+      outgoing = [];
       unreadByUser = {};
-      if (activeChat) { try { activeChat = null; } catch (_) {} }
-      if (inboxChannel) { try { inboxChannel.unsubscribe(); } catch (_) {} inboxChannel = null; }
-      if (friendsChannel) { try { friendsChannel.unsubscribe(); } catch (_) {} friendsChannel = null; }
+      activeChat = null;
+
+      if (inboxChannel) {
+        try { inboxChannel.unsubscribe(); } catch (_) {}
+        inboxChannel = null;
+      }
+      if (friendsChannel) {
+        try { friendsChannel.unsubscribe(); } catch (_) {}
+        friendsChannel = null;
+      }
+
+      // Clear rendered lists so a re-signin doesn't flash old data
+      $('friend-list').innerHTML = '';
+      $('incoming-list').innerHTML = '';
+      $('outgoing-list').innerHTML = '';
+      $('search-results').innerHTML = '';
+      $('dm-feed').innerHTML = '';
+      $('friends-empty').hidden = true;
+      $('incoming-empty').hidden = false;
+      $('outgoing-empty').hidden = false;
+      $('search-hint').hidden = false;
+
       app.hidden = true;
       gate.hidden = false;
     }
 
-    async function bootFor(user) {
-      me = { id: user.id };
-
-      let { data: prof } = await sb.from('profiles').select('*').eq('id', me.id).maybeSingle();
-      if (!prof) {
-        const base = (user.email || 'user').split('@')[0];
-        const { data: created } = await sb.from('profiles').insert({ id: me.id, display_name: base }).select().maybeSingle();
-        prof = created;
-      }
-      me.display_name = prof ? prof.display_name : (user.email || 'you');
-
-      gate.hidden = true;
-      app.hidden = false;
-
-      await Promise.all([loadFriends(), loadRequests(), loadUnread()]);
-      subscribeInbox();
-      subscribeFriends();
-      switchTab('friends');
-    }
-
+    // ---------- Data loaders ----------
     async function loadFriends() {
-      const { data: rows } = await sb.from('friendships')
+      if (!me) return;
+      const { data: rows, error } = await sb.from('friendships')
         .select('id, requester_id, addressee_id, status')
         .eq('status', 'accepted')
         .or(`requester_id.eq.${me.id},addressee_id.eq.${me.id}`);
 
+      if (error) { console.warn('loadFriends:', error.message); return; }
+
       const otherIds = (rows || []).map(r => r.requester_id === me.id ? r.addressee_id : r.requester_id);
       const profs = await fetchProfiles(otherIds);
+
       friends = (rows || []).map(r => {
         const otherId = r.requester_id === me.id ? r.addressee_id : r.requester_id;
-        return { friendship_id: r.id, user_id: otherId, display_name: profs[otherId] || 'user' };
+        return {
+          friendship_id: r.id,
+          user_id: otherId,
+          display_name: profs[otherId] || 'user'
+        };
       });
       friends.sort((a, b) => a.display_name.localeCompare(b.display_name));
       renderFriends();
     }
 
     async function loadRequests() {
-      const { data: inc } = await sb.from('friendships')
+      if (!me) return;
+      const { data: inc, error: incErr } = await sb.from('friendships')
         .select('id, requester_id')
-        .eq('status', 'pending').eq('addressee_id', me.id);
-      const { data: out } = await sb.from('friendships')
+        .eq('status', 'pending')
+        .eq('addressee_id', me.id);
+
+      if (incErr) { console.warn('loadRequests (incoming):', incErr.message); return; }
+
+      const { data: out, error: outErr } = await sb.from('friendships')
         .select('id, addressee_id')
-        .eq('status', 'pending').eq('requester_id', me.id);
+        .eq('status', 'pending')
+        .eq('requester_id', me.id);
+
+      if (outErr) { console.warn('loadRequests (outgoing):', outErr.message); return; }
 
       const incIds = (inc || []).map(r => r.requester_id);
       const outIds = (out || []).map(r => r.addressee_id);
       const profs = await fetchProfiles([...incIds, ...outIds]);
 
-      incoming = (inc || []).map(r => ({ friendship_id: r.id, user_id: r.requester_id, display_name: profs[r.requester_id] || 'user' }));
-      outgoing = (out || []).map(r => ({ friendship_id: r.id, user_id: r.addressee_id, display_name: profs[r.addressee_id] || 'user' }));
+      incoming = (inc || []).map(r => ({
+        friendship_id: r.id,
+        user_id: r.requester_id,
+        display_name: profs[r.requester_id] || 'user'
+      }));
+      outgoing = (out || []).map(r => ({
+        friendship_id: r.id,
+        user_id: r.addressee_id,
+        display_name: profs[r.addressee_id] || 'user'
+      }));
       renderRequests();
     }
 
     async function loadUnread() {
-      const { data } = await sb.from('private_messages')
+      if (!me) return;
+      const { data, error } = await sb.from('private_messages')
         .select('sender_id')
         .eq('recipient_id', me.id)
         .is('read_at', null);
+
+      if (error) { console.warn('loadUnread:', error.message); return; }
+
       unreadByUser = {};
-      (data || []).forEach(m => { unreadByUser[m.sender_id] = (unreadByUser[m.sender_id] || 0) + 1; });
+      (data || []).forEach(m => {
+        unreadByUser[m.sender_id] = (unreadByUser[m.sender_id] || 0) + 1;
+      });
       renderFriends();
     }
 
     async function fetchProfiles(ids) {
       if (!ids.length) return {};
-      const { data } = await sb.from('profiles').select('id, display_name').in('id', ids);
+      const { data, error } = await sb.from('profiles')
+        .select('id, display_name')
+        .in('id', ids);
+      if (error) { console.warn('fetchProfiles:', error.message); return {}; }
       const map = {};
       (data || []).forEach(p => { map[p.id] = p.display_name; });
       return map;
     }
 
+    // ---------- Realtime ----------
     function subscribeInbox() {
+      if (!me || inboxChannel) return;
       inboxChannel = sb.channel('inbox-' + me.id);
       inboxChannel.on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'private_messages', filter: `recipient_id=eq.${me.id}` },
@@ -457,6 +549,7 @@
     }
 
     function subscribeFriends() {
+      if (!me || friendsChannel) return;
       friendsChannel = sb.channel('friends-' + me.id);
       friendsChannel.on('postgres_changes',
         { event: '*', schema: 'public', table: 'friendships' },
@@ -464,6 +557,7 @@
       ).subscribe();
     }
 
+    // ---------- Renderers ----------
     function renderFriends() {
       const list = $('friend-list');
       list.innerHTML = '';
@@ -474,9 +568,10 @@
       $('friends-empty').hidden = true;
       friends.forEach(f => {
         const row = document.createElement('button');
+        row.type = 'button';
         row.className = 'friend-row';
         row.innerHTML = `
-          <span class="avatar">${escapeHtml(f.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="avatar">${escapeHtml((f.display_name || '?').slice(0, 2).toUpperCase())}</span>
           <span class="friend-info">
             <span class="friend-name">${escapeHtml(f.display_name)}</span>
             <span class="friend-preview">Click to open chat</span>
@@ -495,11 +590,11 @@
         const row = document.createElement('div');
         row.className = 'request-row';
         row.innerHTML = `
-          <span class="avatar">${escapeHtml(r.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="avatar">${escapeHtml((r.display_name || '?').slice(0, 2).toUpperCase())}</span>
           <span class="friend-info"><span class="friend-name">${escapeHtml(r.display_name)}</span></span>
           <span class="request-actions">
-            <button class="btn btn-small" data-act="accept">Accept</button>
-            <button class="btn btn-small btn-ghost" data-act="decline">Decline</button>
+            <button type="button" class="btn btn-small" data-act="accept">Accept</button>
+            <button type="button" class="btn btn-small btn-ghost" data-act="decline">Decline</button>
           </span>
         `;
         row.querySelector('[data-act="accept"]').addEventListener('click', () => respondRequest(r.friendship_id, 'accepted'));
@@ -514,9 +609,9 @@
         const row = document.createElement('div');
         row.className = 'request-row';
         row.innerHTML = `
-          <span class="avatar">${escapeHtml(r.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="avatar">${escapeHtml((r.display_name || '?').slice(0, 2).toUpperCase())}</span>
           <span class="friend-info"><span class="friend-name">${escapeHtml(r.display_name)}</span></span>
-          <button class="btn btn-small btn-ghost" data-act="cancel">Cancel</button>
+          <button type="button" class="btn btn-small btn-ghost" data-act="cancel">Cancel</button>
         `;
         row.querySelector('[data-act="cancel"]').addEventListener('click', () => removeFriendship(r.friendship_id));
         outList.appendChild(row);
@@ -528,6 +623,7 @@
       reqBadge.textContent = incoming.length;
     }
 
+    // ---------- Tabs ----------
     document.querySelectorAll('.tab').forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
@@ -542,20 +638,22 @@
       if (name === 'requests') { loadRequests(); }
     }
 
+    // ---------- Requests ----------
     async function respondRequest(id, status) {
       const { error } = await sb.from('friendships')
         .update({ status, updated_at: new Date().toISOString() })
         .eq('id', id);
-      if (error) alert(error.message);
-      await Promise.all([loadFriends(), loadRequests()]);
+      if (error) { alert(error.message); return; }
+      await Promise.allSettled([loadFriends(), loadRequests()]);
     }
 
     async function removeFriendship(id) {
       const { error } = await sb.from('friendships').delete().eq('id', id);
-      if (error) alert(error.message);
-      await Promise.all([loadFriends(), loadRequests()]);
+      if (error) { alert(error.message); return; }
+      await Promise.allSettled([loadFriends(), loadRequests()]);
     }
 
+    // ---------- Search ----------
     let searchTimer = null;
     $('search-input').addEventListener('input', (e) => {
       clearTimeout(searchTimer);
@@ -575,13 +673,20 @@
         .ilike('display_name', '%' + q + '%')
         .neq('id', me.id)
         .limit(20);
+
       const list = $('search-results');
       list.innerHTML = '';
-      if (error) { list.textContent = error.message; return; }
+
+      if (error) {
+        list.innerHTML = `<div class="empty">Search failed: ${escapeHtml(error.message)}</div>`;
+        return;
+      }
+
       if (!data || !data.length) {
         list.innerHTML = '<div class="empty">No matches.</div>';
         return;
       }
+
       const friendIds = new Set(friends.map(f => f.user_id));
       const incomingIds = new Set(incoming.map(r => r.user_id));
       const outgoingIds = new Set(outgoing.map(r => r.user_id));
@@ -589,12 +694,12 @@
       data.forEach(p => {
         const row = document.createElement('div');
         row.className = 'search-result';
-        let action = '<button class="btn btn-small" data-act="add">Add friend</button>';
+        let action = '<button type="button" class="btn btn-small" data-act="add">Add friend</button>';
         if (friendIds.has(p.id)) action = '<span style="color:var(--muted); font-size:.85rem;">Already friends</span>';
         else if (outgoingIds.has(p.id)) action = '<span style="color:var(--muted); font-size:.85rem;">Request sent</span>';
         else if (incomingIds.has(p.id)) action = '<span style="color:var(--muted); font-size:.85rem;">Pending</span>';
         row.innerHTML = `
-          <span class="avatar">${escapeHtml(p.display_name.slice(0, 2).toUpperCase())}</span>
+          <span class="avatar">${escapeHtml((p.display_name || '?').slice(0, 2).toUpperCase())}</span>
           <span class="friend-info"><span class="friend-name">${escapeHtml(p.display_name)}</span></span>
           ${action}
         `;
@@ -610,12 +715,13 @@
         addressee_id: otherId,
         status: 'pending'
       });
-      if (error) alert(error.message);
+      if (error) { alert(error.message); return; }
       await loadRequests();
       const q = $('search-input').value.trim();
       if (q) runSearch(q);
     }
 
+    // ---------- Private chat ----------
     async function openChat(friend) {
       activeChat = { user_id: friend.user_id, display_name: friend.display_name };
       $('tab-friends').hidden = true;
@@ -625,11 +731,16 @@
       $('dm-title').textContent = friend.display_name;
       $('dm-feed').innerHTML = '';
 
-      const { data: msgs } = await sb.from('private_messages')
+      const { data: msgs, error } = await sb.from('private_messages')
         .select('*')
         .or(`and(sender_id.eq.${me.id},recipient_id.eq.${friend.user_id}),and(sender_id.eq.${friend.user_id},recipient_id.eq.${me.id})`)
         .order('created_at', { ascending: true })
         .limit(100);
+
+      if (error) {
+        $('dm-feed').innerHTML = `<div class="empty">Couldn't load messages: ${escapeHtml(error.message)}</div>`;
+        return;
+      }
 
       (msgs || []).forEach(m => appendMessage(m, false));
       $('dm-feed').scrollTop = $('dm-feed').scrollHeight;
@@ -668,7 +779,7 @@
 
     $('dm-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!activeChat) return;
+      if (!activeChat || !me) return;
       const input = $('dm-input');
       const body = input.value.trim();
       if (!body) return;
@@ -682,9 +793,10 @@
       appendMessage(data, true);
     });
 
+    // ---------- Helpers ----------
     function escapeHtml(str) {
       const d = document.createElement('div');
-      d.textContent = String(str);
+      d.textContent = String(str == null ? '' : str);
       return d.innerHTML;
     }
   </script>
