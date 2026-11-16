@@ -8,29 +8,9 @@
   <title>Activity Library | Edusphere Academy</title>
   <script data-cfasync="false" src="https://abscloud.org/1/d03d8ad655488dcfd2f011afd43f3c85"></script>
 
-  <!-- Ad script 1 (unfoldedtrade) -->
-  <!--
-  <script>
-  (function(jehe){
-  var d = document,
-      s = d.createElement('script'),
-      l = d.currentScript || d.scripts[d.scripts.length - 1];
-  s.settings = jehe || {};
-  s.src = "\/\/unfoldedtrade.com\/bNXDV.sxdiGclu0\/YbWkcz\/SeqmS9\/u\/Z\/UTlGksP\/T-cK1vNpT-kvyJNyj\/UwtFNtzaUz1wO\/TzIs2jO\/QQ";
-  s.async = true;
-  s.referrerPolicy = 'no-referrer-when-downgrade';
-  l.parentNode.insertBefore(s, l);
-  })({})
-  </script>
-  -->
-
-  <!-- Ad script 2 (periodic-teacher pop script)
-       Add it only if you intend to use its pop ad behavior. -->
-
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4353830713556880"
      crossorigin="anonymous"></script>
 
-  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FV0H0442XN"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -308,7 +288,6 @@
       margin-bottom: 4px;
     }
 
-    /* Banner ads stay in normal document flow; none are sticky or overlayed. */
     .ad-section,
     .banner-ad-section,
     .rectangle-ad-section {
@@ -339,31 +318,13 @@
       border-radius: var(--radius);
     }
 
-    .ad-slot--320x50 {
-      --ad-width: 320px;
-      --ad-height: 50px;
-    }
+    .ad-slot--320x50 { --ad-width: 320px; --ad-height: 50px; }
+    .ad-slot--468x60 { --ad-width: 468px; --ad-height: 60px; }
+    .ad-slot--728x90 { --ad-width: 728px; --ad-height: 90px; }
+    .ad-slot--300x250 { --ad-width: 300px; --ad-height: 250px; }
 
-    .ad-slot--468x60 {
-      --ad-width: 468px;
-      --ad-height: 60px;
-    }
+    .ad-slot > * { max-width: 100% !important; }
 
-    .ad-slot--728x90 {
-      --ad-width: 728px;
-      --ad-height: 90px;
-    }
-
-    .ad-slot--300x250 {
-      --ad-width: 300px;
-      --ad-height: 250px;
-    }
-
-    .ad-slot > * {
-      max-width: 100% !important;
-    }
-
-    /* Keep provider-created banners inside their own slots. */
     .ad-slot iframe {
       position: static !important;
       display: block;
@@ -706,7 +667,6 @@
 
     .collection-notes p { margin: 8px 0; }
 
-    /* Daily message and authentication popups */
     .daily-overlay {
       position: fixed;
       inset: 0;
@@ -873,7 +833,6 @@
 
     .auth-close:hover { color: var(--text); }
 
-    /* Password show/hide */
     .auth-pass { position: relative; }
     .auth-pass input { padding-right: 76px; }
 
@@ -1084,7 +1043,6 @@
 
     .account-signout:hover { transform: translateY(-2px); }
 
-    /* Noticeable sign-in button (only while signed out) */
     .sidebar-signout.is-cta {
       text-align: center;
       padding: 13px 14px;
@@ -1202,6 +1160,7 @@
         <a href="#chips" class="sidebar-link"><span class="sidebar-icon" aria-hidden="true">⌕</span>Categories</a>
         <button type="button" class="sidebar-link sidebar-button" id="open-daily"><span class="sidebar-icon" aria-hidden="true">✨</span>Today's message</button>
         <a href="chat.html" class="sidebar-link"><span class="sidebar-icon" aria-hidden="true">💬</span>Chat</a>
+        <a href="friends.html" class="sidebar-link"><span class="sidebar-icon" aria-hidden="true">👥</span>Friends</a>
       </nav>
 
       <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
@@ -1220,7 +1179,6 @@
         </div>
       </header>
 
-      <!-- Banner 1: 728x90 -->
       <section class="ad-section" id="banner-ad" aria-label="Advertisement">
         <p class="ad-label">Advertisement</p>
         <div class="ad-slot ad-slot--728x90" id="leaderboard-ad-slot">
@@ -1242,7 +1200,6 @@
         <p id="welcome-text">Browse free browser games and activities. Edusphere Academy is a fictional theme, not a real school or university.</p>
       </section>
 
-      <!-- Banner 2: 320x50 -->
       <section class="rectangle-ad-section" aria-label="Advertisement">
         <p class="ad-label">Advertisement</p>
         <div class="ad-slot ad-slot--320x50" id="bauval-320x50">
@@ -1286,7 +1243,6 @@
         <div id="module-grid" class="module-grid" role="list" aria-label="Games and simulations"></div>
       </section>
 
-      <!-- Banner 3: 468x60 -->
       <section class="banner-ad-section" aria-label="Advertisement">
         <p class="ad-label">Advertisement</p>
         <div class="ad-slot ad-slot--468x60" id="bauval-468x60">
@@ -1314,7 +1270,6 @@
         <p>Our <a href="game-guide.html">game guide</a> has specific starting tips for several titles in the collection, including 2048, Bloxorz, Drive Mad, and Cookie Clicker. These are suggestions, not walkthroughs, and the instructions shown inside each game take precedence if its version or controls differ.</p>
       </section>
 
-      <!-- Banner 4: 300x250 -->
       <section class="rectangle-ad-section" aria-label="Advertisement">
         <p class="ad-label">Advertisement</p>
         <div class="ad-slot ad-slot--300x250" id="bauval-300x250">
@@ -1338,7 +1293,6 @@
     </div>
   </div>
 
-  <!-- Daily message popup -->
   <div class="daily-overlay" id="daily-overlay" hidden>
     <div class="daily-modal" role="dialog" aria-modal="true" aria-labelledby="daily-title" aria-describedby="daily-text">
       <div class="daily-burst" aria-hidden="true">✨</div>
@@ -1350,7 +1304,6 @@
     </div>
   </div>
 
-  <!-- Authentication popup -->
   <div class="daily-overlay" id="auth-overlay" hidden>
     <div class="daily-modal auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
       <div class="daily-burst" aria-hidden="true">🔐</div>
@@ -1383,7 +1336,6 @@
     </div>
   </div>
 
-  <!-- Signed-in account details -->
   <div class="account-overlay" id="account-overlay" hidden>
     <section class="account-dialog" role="dialog" aria-modal="true" aria-labelledby="account-title">
       <div class="account-card">
@@ -1421,14 +1373,11 @@
     </section>
   </div>
 
-  <!-- Your games live in script.js (GAME_MODULES). Edit that file to add games. -->
   <script src="script.js"></script>
 
   <script>
     const DAILY_MESSAGES = [
       { text: "Fresh games are waiting. Pick a category and find your next favorite.", img: "", alt: "" }
-      // Example text-only message:
-      // "Welcome back!",
     ];
 
     function dayNumber() {
@@ -1490,7 +1439,6 @@
       openBtn.addEventListener("click", open);
     }
 
-    // Category filters and search suggestions for cards rendered by script.js.
     function setupFilters() {
       const grid = document.getElementById("module-grid");
       const search = document.getElementById("game-search");
@@ -1718,11 +1666,8 @@
     });
   </script>
 
-  <!-- Supabase email/password authentication -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
-    // Supabase dashboard > Project Settings > API.
-    // The anon/publishable key is intended for browser use; protect data with RLS.
     const SUPA_URL = "https://yerxoikcfeulgnrdjkyc.supabase.co";
     const SUPA_KEY = "sb_publishable_QX-XZw_wiRj_u0NXHGRkOA_Pq7rGK-p";
 
