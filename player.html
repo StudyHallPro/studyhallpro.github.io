@@ -7,29 +7,9 @@
   <meta name="theme-color" content="#f5f4ed">
   <title>Loading game... | Edusphere Academy</title>
 
-  <!-- Ad script 2 (periodic-teacher pop script)
-       >>> PASTE YOUR LONG <script>(function(options){ ... })({...})</script> BLOCK HERE <<<
-       Copy it exactly as it is in your current player.html. -->
-
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4353830713556880"
      crossorigin="anonymous"></script>
 
-  <!-- WGPlayer universal ad tag -->
-  <script type="text/javascript">
-    (function (d) {
-      var WGPLAYER_BASE = "";
-      if (!WGPLAYER_BASE) return;
-
-      var s = d.createElement("script");
-      s.async = true;
-      s.src = WGPLAYER_BASE +
-        encodeURIComponent(location.hostname) +
-        "&wp=" + encodeURIComponent(location.pathname);
-      d.head.appendChild(s);
-    })(document);
-  </script>
-
-  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FV0H0442XN"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -84,7 +64,6 @@
       padding: 24px clamp(16px, 4vw, 32px) 48px;
     }
 
-    /* ---- Top bar ---- */
     .topbar {
       display: flex;
       align-items: center;
@@ -128,7 +107,6 @@
       justify-content: flex-end;
     }
 
-    /* ---- Signed-in user chip ---- */
     .user-chip {
       display: flex;
       align-items: center;
@@ -166,7 +144,6 @@
       font-weight: 600;
     }
 
-    /* ---- Buttons ---- */
     .btn {
       display: inline-block;
       padding: 10px 16px;
@@ -198,7 +175,6 @@
       100% { outline: 0 solid rgba(255,79,154,0); }
     }
 
-    /* ---- Sign-in reminder banner ---- */
     .signin-banner {
       position: relative;
       display: flex;
@@ -249,7 +225,6 @@
 
     .banner-close:hover { color: var(--text); }
 
-    /* ---- Top banner ad stack (all banners load before the game) ---- */
     .top-banner-ads {
       width: 100%;
       max-width: 960px;
@@ -299,7 +274,6 @@
       }
     }
 
-    /* ---- Game container ---- */
     .game-container {
       position: relative;
       width: 100%;
@@ -320,7 +294,6 @@
       border: 0;
     }
 
-    /* ---- Non-interstitial banner advertisements ---- */
     .native-ad {
       width: 100%;
       max-width: 960px;
@@ -352,7 +325,6 @@
       text-align: center;
     }
 
-    /* Keep each banner inside its visible ad slot. */
     .bauval-ad-slot {
       display: flex;
       justify-content: center;
@@ -363,7 +335,6 @@
       overflow: hidden;
     }
 
-    /* Prevent the ad tag's generated banner from floating outside its slot. */
     .bauval-ad-slot > *,
     .bauval-ad-slot iframe {
       position: static !important;
@@ -383,7 +354,6 @@
       text-align: center;
     }
 
-    /* ---- Title ---- */
     .title-block {
       max-width: 960px;
       margin: 34px auto 0;
@@ -406,7 +376,6 @@
       overflow-wrap: anywhere;
     }
 
-    /* ---- More Games ---- */
     .more-games {
       max-width: 960px;
       margin: 48px auto 0;
@@ -494,7 +463,6 @@
       line-height: 1.2;
     }
 
-    /* ---- Error state ---- */
     .error-msg {
       max-width: 960px;
       margin: 40px auto;
@@ -534,7 +502,6 @@
       font-size: .9rem;
     }
 
-    /* ---- Authentication popup ---- */
     .auth-overlay {
       position: fixed;
       inset: 0;
@@ -892,77 +859,6 @@
         scroll-behavior: auto !important;
       }
     }
-
-    /*
-    =========================================================
-    VOICE CHAT CSS — COMMENTED OUT (disabled)
-    Remove the surrounding comment markers to re-enable.
-    =========================================================
-
-    #voice-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-      background: var(--panel);
-      border-top: 2px solid var(--sun);
-      box-shadow: 0 -4px 14px rgba(36, 53, 47, 0.10);
-      font-family: var(--body);
-      color: var(--text);
-    }
-    #voice-bar, #voice-bar * { touch-action: manipulation; }
-
-    #voice-bar .voice-field { display: flex; align-items: center; gap: 6px; }
-    #voice-bar label { font-size: .85rem; font-weight: 600; color: var(--muted); }
-
-    #party-code {
-      width: 130px;
-      padding: 8px 12px;
-      font: 500 .95rem var(--body);
-      color: var(--text);
-      background: var(--panel-hi);
-      border: 1px solid var(--line);
-      border-radius: 7px;
-      outline: none;
-    }
-    #party-code:focus { border-color: var(--sun); }
-
-    #voice-bar .vbtn {
-      padding: 8px 16px;
-      border: 0;
-      border-radius: 7px;
-      cursor: pointer;
-      font: 700 .9rem var(--body);
-      color: #fffefa;
-      background: var(--sun);
-      transition: background .15s;
-    }
-    #voice-bar .vbtn:hover { background: #28523f; }
-    #voice-bar .vbtn:disabled { opacity: .6; cursor: wait; }
-    #voice-bar .vbtn--join { background: var(--sun); }
-    #voice-bar .vbtn--mute { background: var(--cyan); }
-    #voice-bar .vbtn--mute.is-muted { background: #c9a227; color: #24352f; }
-    #voice-bar .vbtn--leave { background: var(--pink); }
-
-    #voice-status { font-size: .85rem; color: var(--muted); min-width: 110px; }
-
-    @media (max-width: 560px) {
-      #voice-bar { gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); }
-      #party-code { width: 100px; }
-      #voice-status { display: none; }
-    }
-
-    =========================================================
-    END VOICE CHAT CSS
-    =========================================================
-    */
   </style>
 
   <link rel="stylesheet" href="theme.css">
@@ -971,7 +867,6 @@
 <body>
   <div class="page">
 
-    <!-- Top bar -->
     <div class="topbar">
       <a href="index.html" class="brand">
         <span class="brand-mark" aria-hidden="true">EA</span>
@@ -984,6 +879,7 @@
           <span class="user-chip-name" id="user-name"></span>
         </button>
 
+        <a href="friends.html" class="btn btn--alt">Friends</a>
         <a href="allgames.html" class="btn btn--alt">&larr; All games</a>
         <a class="btn btn--alt" id="direct-play-btn" hidden target="_blank" rel="noopener noreferrer">Direct Play</a>
         <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
@@ -992,80 +888,72 @@
       </div>
     </div>
 
-    <!-- All banner ads grouped at the top for iPad/tablet viewports -->
     <section class="top-banner-ads" aria-label="Advertisements">
-
-
-      <!-- Banner advertisement 1 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-        <script>
-          atOptions = {
-            'key' : '049d96f182d4f5c7d51cfce79bd22181',
-            'format' : 'iframe',
-            'height' : 50,
-            'width' : 320,
-            'params' : {}
-          };
-        </script>
-        <script src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+      <div class="native-ad" role="complementary" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <div class="bauval-ad-slot">
+          <script>
+            atOptions = {
+              'key' : '049d96f182d4f5c7d51cfce79bd22181',
+              'format' : 'iframe',
+              'height' : 50,
+              'width' : 320,
+              'params' : {}
+            };
+          </script>
+          <script src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
+        </div>
       </div>
-    </div>
 
-      <!-- Banner advertisement 2 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-       <script>
-  atOptions = {
-    'key' : 'a63315b56070b2858b3ebf1bf5e5b2ba',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/a63315b56070b2858b3ebf1bf5e5b2ba"></script>
+      <div class="native-ad" role="complementary" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <div class="bauval-ad-slot">
+          <script>
+            atOptions = {
+              'key' : 'a63315b56070b2858b3ebf1bf5e5b2ba',
+              'format' : 'iframe',
+              'height' : 60,
+              'width' : 468,
+              'params' : {}
+            };
+          </script>
+          <script src="https://bauval.org/22/a63315b56070b2858b3ebf1bf5e5b2ba"></script>
+        </div>
       </div>
-    </div>
 
-      <!-- Banner advertisement 3 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-        <script>
-  atOptions = {
-    'key' : 'c43a82f1398b372a09d693ec41c5182b',
-    'format' : 'iframe',
-    'height' : 90,
-    'width' : 728,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/c43a82f1398b372a09d693ec41c5182b"></script>
+      <div class="native-ad" role="complementary" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <div class="bauval-ad-slot">
+          <script>
+            atOptions = {
+              'key' : 'c43a82f1398b372a09d693ec41c5182b',
+              'format' : 'iframe',
+              'height' : 90,
+              'width' : 728,
+              'params' : {}
+            };
+          </script>
+          <script src="https://bauval.org/22/c43a82f1398b372a09d693ec41c5182b"></script>
+        </div>
       </div>
-    </div>
 
-      <!-- Banner advertisement 4 -->
-    <div class="native-ad" role="complementary" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="bauval-ad-slot">
-        <script>
-  atOptions = {
-    'key' : '5b4efe045f4ae78dd30e7fc61e81e871',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/5b4efe045f4ae78dd30e7fc61e81e871"></script>
+      <div class="native-ad" role="complementary" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <div class="bauval-ad-slot">
+          <script>
+            atOptions = {
+              'key' : '5b4efe045f4ae78dd30e7fc61e81e871',
+              'format' : 'iframe',
+              'height' : 250,
+              'width' : 300,
+              'params' : {}
+            };
+          </script>
+          <script src="https://bauval.org/22/5b4efe045f4ae78dd30e7fc61e81e871"></script>
+        </div>
       </div>
-    </div>
     </section>
 
-    <!-- Sign-in reminder -->
     <div class="signin-banner" id="signin-banner" role="region" aria-label="Save your progress" hidden>
       <p>
         <strong>Don't lose your progress!</strong>
@@ -1080,7 +968,6 @@
       <button type="button" class="banner-close" id="banner-close" aria-label="Hide this reminder">&times;</button>
     </div>
 
-    <!-- Active game -->
     <div class="game-container" id="game-container">
       <iframe
         id="game-frame"
@@ -1096,7 +983,6 @@
       </a>
     </div>
 
-    <!-- Title -->
     <div class="title-block" id="title-block">
       <p class="eyebrow">Now playing</p>
       <h1 class="game-title" id="game-title">Loading...</h1>
@@ -1106,7 +992,6 @@
       No game selected. <a href="allgames.html">Pick one from the hub</a>.
     </p>
 
-    <!-- Recommendations -->
     <section class="more-games" id="more-games">
       <h2>More Games</h2>
       <p class="section-lead">Keep the fun going.</p>
@@ -1126,7 +1011,6 @@
 
   </div>
 
-  <!-- Signed-in account details -->
   <div class="account-overlay" id="account-overlay" hidden>
     <section class="account-dialog" role="dialog" aria-modal="true" aria-labelledby="account-title">
       <div class="account-card">
@@ -1153,6 +1037,14 @@
           <p class="account-more" id="account-more" hidden></p>
         </section>
 
+        <section class="account-games-panel" aria-labelledby="account-friends-title" style="margin-top:16px;">
+          <h3 id="account-friends-title">Friends</h3>
+          <p style="margin:0 0 12px; color:var(--muted); font-size:.9rem;">
+            Send requests, accept invites, and start private chats with other students.
+          </p>
+          <a class="btn btn--pink" href="friends.html">Open friends &amp; chats</a>
+        </section>
+
         <p class="account-device">
           <strong>On this device:</strong> your play history is stored in this browser. Game progress syncs to your account when supported by the game.
         </p>
@@ -1164,7 +1056,6 @@
     </section>
   </div>
 
-  <!-- Authentication popup -->
   <div class="auth-overlay" id="auth-overlay" hidden>
     <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
       <div class="auth-burst" aria-hidden="true">🔐</div>
@@ -1197,7 +1088,6 @@
     </div>
   </div>
 
-  <!-- Game catalog -->
   <script src="script.js"></script>
 
   <script>
@@ -1216,7 +1106,6 @@
 
     const MAX_SUGGESTIONS = 24;
 
-    /* ---- Read URL parameters ---- */
     const params = new URLSearchParams(window.location.search);
     const gameId = (params.get("game") || "").trim();
     let gameTitle = (params.get("title") || "").trim();
@@ -1319,7 +1208,6 @@
       return Math.floor(minutes / 60) + "h " + (minutes % 60) + "m";
     }
 
-    /* ---- Load game directly ---- */
     function loadGame() {
       const heading = document.getElementById("game-title");
       const container = document.getElementById("game-container");
@@ -1348,7 +1236,6 @@
       trackCurrentGame();
     }
 
-    /* ---- Recommendations ---- */
     function shuffle(list) {
       const a = list.slice();
 
@@ -1423,7 +1310,6 @@
       });
     }
 
-    /* ---- Fullscreen ---- */
     function setupFullscreen() {
       const btn = document.getElementById("fs-btn");
       const container = document.getElementById("game-container");
@@ -1437,13 +1323,11 @@
       });
     }
 
-    /* ---- Init ---- */
     loadGame();
     renderRecommendations();
     setupFullscreen();
   </script>
 
-  <!-- Supabase authentication -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 
   <script>
@@ -1746,7 +1630,6 @@
         }
       }
 
-      /* ---- Buttons ---- */
       toggleBtn.addEventListener("click", async () => {
         if (!user) {
           return open("signin");
@@ -1812,7 +1695,6 @@
         }
       });
 
-      /* ---- Form submit ---- */
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -1889,7 +1771,6 @@
         }
       });
 
-      /* ---- Session handling ---- */
       renderUser(null);
 
       if (!sb) {
@@ -1926,257 +1807,6 @@
 
     document.addEventListener("DOMContentLoaded", setupAuth);
   </script>
-
-  <!-- =========================================================
-       VOICE CHAT HTML + SCRIPT — COMMENTED OUT (disabled)
-       Remove the surrounding HTML comment markers to re-enable.
-       =========================================================
-
-  <div id="voice-bar" role="region" aria-label="Voice chat">
-    <div class="voice-field">
-      <label for="party-code">Party code</label>
-      <input id="party-code" type="text" placeholder="e.g. test123" autocomplete="off" />
-    </div>
-    <button id="join-btn" class="vbtn vbtn--join" type="button">Join Voice</button>
-    <button id="mute-btn" class="vbtn vbtn--mute" type="button" style="display:none;">Mute</button>
-    <button id="leave-btn" class="vbtn vbtn--leave" type="button" style="display:none;">Leave</button>
-    <span id="voice-status" aria-live="polite"></span>
-  </div>
-
-  <script>
-  (function () {
-    const WSS_URL = "wss://voice-relay.foundersunset.workers.dev";
-    const WORKLET_URL = "/pcm-processor.js";
-    const SAMPLE_RATE = 16000;
-    const SILENCE_RMS = 0.012;
-    const VAD_HANGOVER_FRAMES = 8;
-    const MAX_BUFFERED_BYTES = 1_000_000;
-    const JITTER_BUFFER = 0.04;
-
-    let ws = null;
-    let audioCtx = null;
-    let micStream = null;
-    let sourceNode = null;
-    let workletNode = null;
-    let muteGain = null;
-    let isMuted = false;
-    let nextPlayTime = 0;
-    let speakingFrames = 0;
-    let currentRoom = "";
-    let cleaningUp = false;
-    let userLeft = false;
-
-    const joinBtn = document.getElementById('join-btn');
-    const muteBtn = document.getElementById('mute-btn');
-    const leaveBtn = document.getElementById('leave-btn');
-    const codeInput = document.getElementById('party-code');
-    const statusEl = document.getElementById('voice-status');
-
-    function makeResampler(fromRate, toRate) {
-      if (fromRate === toRate) return (x) => x;
-      const ratio = fromRate / toRate;
-      let pos = 0;
-      return (input) => {
-        const outLen = Math.floor((input.length - pos) / ratio);
-        const out = new Float32Array(Math.max(0, outLen));
-        for (let i = 0; i < outLen; i++) {
-          const idx = pos + i * ratio;
-          const i0 = Math.floor(idx);
-          const i1 = Math.min(i0 + 1, input.length - 1);
-          const t = idx - i0;
-          out[i] = input[i0] * (1 - t) + input[i1] * t;
-        }
-        pos = (pos + outLen * ratio) % 1;
-        return out;
-      };
-    }
-
-    joinBtn.addEventListener('click', async () => {
-      const room = codeInput.value.trim();
-      if (!room) { alert("Enter a party code first!"); return; }
-      currentRoom = room;
-      userLeft = false;
-
-      try {
-        joinBtn.disabled = true;
-        statusEl.textContent = "Connecting...";
-
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        await audioCtx.audioWorklet.addModule(WORKLET_URL);
-
-        micStream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-        });
-
-        await audioCtx.resume();
-        console.log("AudioContext state after resume:", audioCtx.state);
-
-        ws = new WebSocket(WSS_URL + "?room=" + encodeURIComponent(room));
-        ws.binaryType = "arraybuffer";
-
-        ws.onopen = async () => {
-          if (audioCtx.state === "suspended") {
-            try { await audioCtx.resume(); } catch (_) {}
-          }
-          console.log("AudioContext state at ws.onopen:", audioCtx.state);
-
-          startMicStreaming();
-          codeInput.style.display = 'none';
-          joinBtn.style.display = 'none';
-          muteBtn.style.display = 'inline-block';
-          leaveBtn.style.display = 'inline-block';
-          statusEl.textContent = "Room " + room + " (1)";
-        };
-
-        ws.onmessage = (event) => {
-          if (typeof event.data === "string") {
-            try {
-              const msg = JSON.parse(event.data);
-              if (msg.type === "count") {
-                statusEl.textContent = "Room " + currentRoom + " (" + msg.count + ")";
-              }
-            } catch (_) {}
-            return;
-          }
-          if (event.data instanceof ArrayBuffer) playPCM(event.data);
-        };
-
-        ws.onclose = () => {
-          ws = null;
-          if (!userLeft && currentRoom) {
-            statusEl.textContent = "Reconnecting...";
-            setTimeout(() => { if (!userLeft) joinBtn.click(); }, 1500);
-          } else {
-            cleanup();
-          }
-        };
-        ws.onerror = () => {};
-      } catch (err) {
-        alert("Could not start voice chat: " + err.message);
-        cleanup();
-      }
-    });
-
-    function startMicStreaming() {
-      sourceNode = audioCtx.createMediaStreamSource(micStream);
-      workletNode = new AudioWorkletNode(audioCtx, 'pcm-processor');
-      const resample = makeResampler(audioCtx.sampleRate, SAMPLE_RATE);
-
-      workletNode.port.onmessage = (ev) => {
-        if (isMuted || !ws || ws.readyState !== WebSocket.OPEN) return;
-
-        const resampled = resample(ev.data);
-        if (!resampled.length) return;
-
-        let sumSq = 0;
-        for (let i = 0; i < resampled.length; i++) sumSq += resampled[i] * resampled[i];
-        const rms = Math.sqrt(sumSq / resampled.length);
-
-        if (rms >= SILENCE_RMS) speakingFrames = VAD_HANGOVER_FRAMES;
-        else if (speakingFrames > 0) speakingFrames--;
-        else return;
-
-        if (ws.bufferedAmount > MAX_BUFFERED_BYTES) return;
-
-        const int16 = new Int16Array(resampled.length);
-        for (let i = 0; i < resampled.length; i++) {
-          const s = Math.max(-1, Math.min(1, resampled[i]));
-          int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-        }
-        ws.send(int16.buffer);
-      };
-
-      muteGain = audioCtx.createGain();
-      muteGain.gain.value = 0.001;
-
-      sourceNode.connect(workletNode);
-      workletNode.connect(muteGain);
-      muteGain.connect(audioCtx.destination);
-    }
-
-    function playPCM(arrayBuffer) {
-      if (!audioCtx || audioCtx.state !== "running") return;
-      const int16 = new Int16Array(arrayBuffer);
-      const float32 = new Float32Array(int16.length);
-      for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768;
-
-      const buffer = audioCtx.createBuffer(1, float32.length, SAMPLE_RATE);
-      buffer.getChannelData(0).set(float32);
-
-      const src = audioCtx.createBufferSource();
-      src.buffer = buffer;
-      src.connect(audioCtx.destination);
-
-      const now = audioCtx.currentTime;
-      if (nextPlayTime < now) nextPlayTime = now + JITTER_BUFFER;
-      src.start(nextPlayTime);
-      nextPlayTime += buffer.duration;
-    }
-
-    muteBtn.addEventListener('click', () => {
-      isMuted = !isMuted;
-      if (micStream) micStream.getAudioTracks()[0].enabled = !isMuted;
-      muteBtn.textContent = isMuted ? "Unmute" : "Mute";
-      muteBtn.classList.toggle('is-muted', isMuted);
-    });
-
-    leaveBtn.addEventListener('click', () => {
-      userLeft = true;
-      if (ws) { try { ws.close(); } catch (_) {} ws = null; }
-      cleanup();
-    });
-
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume().catch(() => {});
-      }
-    });
-    window.addEventListener('focus', () => {
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume().catch(() => {});
-      }
-    });
-    document.addEventListener('touchstart', () => {
-      if (audioCtx && audioCtx.state === 'suspended' && ws) {
-        audioCtx.resume().catch(() => {});
-      }
-    }, { passive: true });
-
-    function cleanup() {
-      if (cleaningUp) return;
-      cleaningUp = true;
-
-      try { if (workletNode) { workletNode.port.onmessage = null; workletNode.disconnect(); } } catch (_) {}
-      try { if (sourceNode) sourceNode.disconnect(); } catch (_) {}
-      try { if (muteGain) muteGain.disconnect(); } catch (_) {}
-      workletNode = sourceNode = muteGain = null;
-
-      if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
-      if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
-
-      nextPlayTime = 0;
-      speakingFrames = 0;
-      isMuted = false;
-      if (!userLeft) currentRoom = "";
-
-      codeInput.style.display = 'inline-block';
-      joinBtn.style.display = 'inline-block';
-      joinBtn.disabled = false;
-      muteBtn.style.display = 'none';
-      muteBtn.textContent = 'Mute';
-      muteBtn.classList.remove('is-muted');
-      leaveBtn.style.display = 'none';
-      statusEl.textContent = '';
-
-      cleaningUp = false;
-    }
-  })();
-  </script>
-
-       =========================================================
-       END VOICE CHAT
-       =========================================================
-  -->
 
 </body>
 </html>
