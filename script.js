@@ -127,7 +127,7 @@ const GAME_MODULES = [
   { href: "games/blumgi-merge", img: "/images/blumgi-merge.jpg", title: "Blumgi Merge", cat: "idle" },
   { href: "games/fancade", img: "/images/fancade.jpg", title: "Fancade", cat: "puzzle" },
   { href: "games/escape-road-3", img: "/images/escape-road-3.png", title: "Escape Road 3", cat: "action" },
-  { href: "ndex.html", img: "/images/reel-league.avif", title: "Reel League", cat: "sports" },
+  { href: "games/reel-league", img: "/images/reel-league.avif", title: "Reel League", cat: "sports" },
   { href: "/minecraft-mods/", img: "/images/movie.jpg", title: "movies", cat: "movie" },
   { href: "games/8-ball-pool", img: "/images/8-ball-pool.jpg", title: "8 Ball Pool", cat: "sports" },
   { href: "games/speedstars", img: "/images/speed-stars.jpg", title: "Speedstars", cat: "racing" },
