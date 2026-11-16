@@ -81,7 +81,7 @@
       width: 100%;
       max-width: 1000px;
       margin: 0 auto;
-      padding: 24px clamp(16px, 4vw, 32px) 48px;
+      padding: 24px clamp(16px, 4vw, 32px) 110px;
     }
 
     /* ---- Top bar ---- */
@@ -891,6 +891,80 @@
         transition: none !important;
         scroll-behavior: auto !important;
       }
+    }
+
+    /* ---- Voice chat bar (always visible at bottom) ---- */
+    #voice-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      background: var(--panel);
+      border-top: 2px solid var(--sun);
+      box-shadow: 0 -4px 14px rgba(36, 53, 47, 0.10);
+      font-family: var(--body);
+      color: var(--text);
+    }
+
+    #voice-bar .voice-field {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #voice-bar label {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    #party-code {
+      width: 130px;
+      padding: 8px 12px;
+      font: 500 .95rem var(--body);
+      color: var(--text);
+      background: var(--panel-hi);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      outline: none;
+    }
+    #party-code:focus { border-color: var(--sun); }
+
+    #voice-bar .vbtn {
+      padding: 8px 16px;
+      border: 0;
+      border-radius: 7px;
+      cursor: pointer;
+      font: 700 .9rem var(--body);
+      color: #fffefa;
+      background: var(--sun);
+      transition: background .15s;
+    }
+    #voice-bar .vbtn:hover { background: #28523f; }
+    #voice-bar .vbtn:disabled { opacity: .6; cursor: wait; }
+
+    #voice-bar .vbtn--join { background: var(--sun); }
+    #voice-bar .vbtn--mute { background: var(--cyan); }
+    #voice-bar .vbtn--mute.is-muted { background: #c9a227; color: #24352f; }
+    #voice-bar .vbtn--leave { background: var(--pink); }
+
+    #voice-status {
+      font-size: .85rem;
+      color: var(--muted);
+      min-width: 110px;
+    }
+
+    @media (max-width: 560px) {
+      #voice-bar { gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); }
+      #party-code { width: 100px; }
+      #voice-status { display: none; }
     }
   </style>
 
@@ -1854,6 +1928,218 @@
     }
 
     document.addEventListener("DOMContentLoaded", setupAuth);
+  </script>
+
+  <!-- Voice chat bar -->
+  <div id="voice-bar" role="region" aria-label="Voice chat">
+    <div class="voice-field">
+      <label for="party-code">Party code</label>
+      <input id="party-code" type="text" placeholder="e.g. test123" autocomplete="off" />
+    </div>
+    <button id="join-btn" class="vbtn vbtn--join" type="button">Join Voice</button>
+    <button id="mute-btn" class="vbtn vbtn--mute" type="button" style="display:none;">Mute</button>
+    <button id="leave-btn" class="vbtn vbtn--leave" type="button" style="display:none;">Leave</button>
+    <span id="voice-status" aria-live="polite"></span>
+  </div>
+
+  <script>
+  (function () {
+    const WSS_URL = "wss://voice-relay.foundersunset.workers.dev";
+    const WORKLET_URL = "/pcm-processor.js";
+    const SAMPLE_RATE = 16000;
+    const SILENCE_RMS = 0.012;
+    const VAD_HANGOVER_FRAMES = 8;
+    const MAX_BUFFERED_BYTES = 1_000_000;
+    const JITTER_BUFFER = 0.04;
+
+    let ws = null;
+    let audioCtx = null;
+    let micStream = null;
+    let sourceNode = null;
+    let workletNode = null;
+    let muteGain = null;
+    let isMuted = false;
+    let nextPlayTime = 0;
+    let speakingFrames = 0;
+    let currentRoom = "";
+    let cleaningUp = false;
+
+    const joinBtn = document.getElementById('join-btn');
+    const muteBtn = document.getElementById('mute-btn');
+    const leaveBtn = document.getElementById('leave-btn');
+    const codeInput = document.getElementById('party-code');
+    const statusEl = document.getElementById('voice-status');
+
+    function makeResampler(fromRate, toRate) {
+      if (fromRate === toRate) return (x) => x;
+      const ratio = fromRate / toRate;
+      let pos = 0;
+      return (input) => {
+        const outLen = Math.floor((input.length - pos) / ratio);
+        const out = new Float32Array(Math.max(0, outLen));
+        for (let i = 0; i < outLen; i++) {
+          const idx = pos + i * ratio;
+          const i0 = Math.floor(idx);
+          const i1 = Math.min(i0 + 1, input.length - 1);
+          const t = idx - i0;
+          out[i] = input[i0] * (1 - t) + input[i1] * t;
+        }
+        pos = (pos + outLen * ratio) % 1;
+        return out;
+      };
+    }
+
+    joinBtn.addEventListener('click', async () => {
+      const room = codeInput.value.trim();
+      if (!room) { alert("Enter a party code first!"); return; }
+      currentRoom = room;
+
+      try {
+        joinBtn.disabled = true;
+        statusEl.textContent = "Connecting...";
+
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        await audioCtx.resume();
+        await audioCtx.audioWorklet.addModule(WORKLET_URL);
+
+        micStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        });
+
+        ws = new WebSocket(WSS_URL + "?room=" + encodeURIComponent(room));
+        ws.binaryType = "arraybuffer";
+
+        ws.onopen = () => {
+          startMicStreaming();
+          codeInput.style.display = 'none';
+          joinBtn.style.display = 'none';
+          muteBtn.style.display = 'inline-block';
+          leaveBtn.style.display = 'inline-block';
+          statusEl.textContent = "Room " + room + " (1)";
+        };
+
+        ws.onmessage = (event) => {
+          if (typeof event.data === "string") {
+            try {
+              const msg = JSON.parse(event.data);
+              if (msg.type === "count") {
+                statusEl.textContent = "Room " + currentRoom + " (" + msg.count + ")";
+              }
+            } catch (_) {}
+            return;
+          }
+          if (event.data instanceof ArrayBuffer) playPCM(event.data);
+        };
+
+        ws.onclose = () => { ws = null; cleanup(); };
+        ws.onerror = () => { ws = null; cleanup(); };
+      } catch (err) {
+        alert("Could not start voice chat: " + err.message);
+        cleanup();
+      }
+    });
+
+    function startMicStreaming() {
+      sourceNode = audioCtx.createMediaStreamSource(micStream);
+      workletNode = new AudioWorkletNode(audioCtx, 'pcm-processor');
+      const resample = makeResampler(audioCtx.sampleRate, SAMPLE_RATE);
+
+      workletNode.port.onmessage = (ev) => {
+        if (isMuted || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+        const resampled = resample(ev.data);
+
+        let sumSq = 0;
+        for (let i = 0; i < resampled.length; i++) sumSq += resampled[i] * resampled[i];
+        const rms = Math.sqrt(sumSq / resampled.length);
+
+        if (rms >= SILENCE_RMS) speakingFrames = VAD_HANGOVER_FRAMES;
+        else if (speakingFrames > 0) speakingFrames--;
+        else return;
+
+        if (ws.bufferedAmount > MAX_BUFFERED_BYTES) return;
+
+        const int16 = new Int16Array(resampled.length);
+        for (let i = 0; i < resampled.length; i++) {
+          const s = Math.max(-1, Math.min(1, resampled[i]));
+          int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        ws.send(int16.buffer);
+      };
+
+      muteGain = audioCtx.createGain();
+      muteGain.gain.value = 0;
+      sourceNode.connect(workletNode);
+      workletNode.connect(muteGain);
+      muteGain.connect(audioCtx.destination);
+    }
+
+    function playPCM(arrayBuffer) {
+      if (!audioCtx) return;
+      const int16 = new Int16Array(arrayBuffer);
+      const float32 = new Float32Array(int16.length);
+      for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768;
+
+      const buffer = audioCtx.createBuffer(1, float32.length, SAMPLE_RATE);
+      buffer.getChannelData(0).set(float32);
+
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer;
+      src.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+      if (nextPlayTime < now) nextPlayTime = now + JITTER_BUFFER;
+      src.start(nextPlayTime);
+      nextPlayTime += buffer.duration;
+    }
+
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      if (micStream) micStream.getAudioTracks()[0].enabled = !isMuted;
+      muteBtn.textContent = isMuted ? "Unmute" : "Mute";
+      muteBtn.classList.toggle('is-muted', isMuted);
+    });
+
+    leaveBtn.addEventListener('click', () => {
+      if (ws) { try { ws.close(); } catch (_) {} ws = null; }
+      cleanup();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+    });
+
+    function cleanup() {
+      if (cleaningUp) return;
+      cleaningUp = true;
+
+      try { if (workletNode) { workletNode.port.onmessage = null; workletNode.disconnect(); } } catch (_) {}
+      try { if (sourceNode) sourceNode.disconnect(); } catch (_) {}
+      try { if (muteGain) muteGain.disconnect(); } catch (_) {}
+      workletNode = sourceNode = muteGain = null;
+
+      if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+      if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
+
+      nextPlayTime = 0;
+      speakingFrames = 0;
+      isMuted = false;
+      currentRoom = "";
+
+      codeInput.style.display = 'inline-block';
+      joinBtn.style.display = 'inline-block';
+      joinBtn.disabled = false;
+      muteBtn.style.display = 'none';
+      muteBtn.textContent = 'Mute';
+      muteBtn.classList.remove('is-muted');
+      leaveBtn.style.display = 'none';
+      statusEl.textContent = '';
+
+      cleaningUp = false;
+    }
+  })();
   </script>
 
 </body>
