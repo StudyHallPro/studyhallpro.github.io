@@ -305,6 +305,47 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
+  
+    /* Bauval banner placements matching allgames.html */
+    .ad-section, .rectangle-ad-section {
+      margin: 0 auto 28px;
+      padding-inline: 20px;
+      text-align: center;
+    }
+    .ad-label {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .ad-slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: var(--ad-width, 728px);
+      min-height: var(--ad-height, 90px);
+      margin: 0 auto;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .ad-slot--320x50 { --ad-width: 320px; --ad-height: 50px; }
+    .ad-slot--728x90 { --ad-width: 728px; --ad-height: 90px; }
+    .ad-slot > * { max-width: 100% !important; }
+    .ad-slot iframe {
+      position: static !important;
+      display: block;
+      max-width: 100% !important;
+      height: auto !important;
+      margin: 0 auto;
+      border: 0;
+      transform: none !important;
+    }
+
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -326,6 +367,18 @@
   </header>
 
   <main>
+
+    <!-- Banner 1: 728x90 (same placement style as allgames.html) -->
+    <section class="ad-section" id="banner-ad" aria-label="Advertisement">
+      <p class="ad-label">Advertisement</p>
+      <div class="ad-slot ad-slot--728x90" id="leaderboard-ad-slot">
+        <script>
+          atOptions = { 'key' : 'c43a82f1398b372a09d693ec41c5182b', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://bauval.org/22/c43a82f1398b372a09d693ec41c5182b"></script>
+      </div>
+    </section>
+
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-content">
@@ -357,6 +410,18 @@
             <img src="images/retro-bowl.jpg" alt="" loading="lazy">
           </a>
         </div>
+      </div>
+    </section>
+
+
+    <!-- Banner 2: 320x50 -->
+    <section class="rectangle-ad-section" aria-label="Advertisement">
+      <p class="ad-label">Advertisement</p>
+      <div class="ad-slot ad-slot--320x50" id="bauval-320x50">
+        <script>
+          atOptions = { 'key' : '049d96f182d4f5c7d51cfce79bd22181', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+        </script>
+        <script src="https://bauval.org/22/049d96f182d4f5c7d51cfce79bd22181"></script>
       </div>
     </section>
 
