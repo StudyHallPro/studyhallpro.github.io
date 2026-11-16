@@ -41,10 +41,11 @@
     .page { width: 100%; max-width: 720px; display: flex; flex-direction: column; height: 85vh; }
 
     .topbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-    .topbar-right { display: flex; align-items: center; gap: 8px; }
+    .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .back-link {
       display: inline-block; padding: 7px 12px; border: 1px solid var(--line);
       border-radius: 7px; color: var(--muted); font: 600 .85rem var(--body); text-decoration: none;
+      white-space: nowrap;
     }
     .back-link:hover { border-color: var(--sun); color: var(--sun); }
     .brand { display: flex; align-items: center; gap: 12px; color: var(--text); text-decoration: none; }
@@ -62,7 +63,6 @@
       box-shadow: 0 4px 14px rgba(36,53,47,.07);
     }
 
-    /* Auth gate */
     .auth-gate {
       flex: 1; display: flex; flex-direction: column; justify-content: center;
       padding: 28px 24px; overflow-y: auto;
@@ -93,7 +93,6 @@
     .status { min-height: 1.2em; margin: 4px 0 10px; font-size: .85rem; color: var(--muted); }
     .status.is-error { color: var(--danger); }
 
-    /* Tabs */
     .tabs { display: flex; background: var(--panel-hi); border-bottom: 1px solid var(--line); flex-shrink: 0; }
     .tab {
       flex: 1; padding: 14px 12px; border: 0; background: none; cursor: pointer;
@@ -108,15 +107,14 @@
     }
     .tab .badge[hidden] { display: none; }
 
-    /* Content */
     .content { flex: 1; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; }
     .content[hidden] { display: none; }
 
-    /* Friend list */
     .friend-row {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 18px; border-bottom: 1px solid var(--line);
-      cursor: pointer; text-align: left; width: 100%; background: none; border-left: 0; border-right: 0; border-top: 0;
+      cursor: pointer; text-align: left; width: 100%;
+      background: none; border-left: 0; border-right: 0; border-top: 0;
       font: inherit; color: inherit;
     }
     .friend-row:hover { background: var(--panel-hi); }
@@ -141,11 +139,9 @@
     }
     .unread[hidden] { display: none; }
 
-    .empty {
-      padding: 32px 24px; text-align: center; color: var(--muted); font-size: .9rem;
-    }
+    .empty { padding: 32px 24px; text-align: center; color: var(--muted); font-size: .9rem; }
+    .empty[hidden] { display: none; }
 
-    /* Requests */
     .request-row {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 18px; border-bottom: 1px solid var(--line);
@@ -156,18 +152,16 @@
       color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
     }
 
-    /* Search */
     .search-wrap { padding: 16px 18px; border-bottom: 1px solid var(--line); }
     .search-result {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 18px; border-bottom: 1px solid var(--line);
     }
 
-    /* DM view */
     .dm-header {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 18px; background: var(--panel-hi);
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid var(--line); flex-shrink: 0;
     }
     .dm-back {
       background: none; border: 0; cursor: pointer;
@@ -190,8 +184,9 @@
 
     .dm-footer {
       padding: 12px; border-top: 1px solid var(--line); background: var(--panel-hi);
-      display: flex; gap: 8px;
+      display: flex; gap: 8px; flex-shrink: 0;
     }
+    .dm-footer .input { flex: 1; }
 
     @media (max-width: 480px) {
       .brand-text { display: none; }
@@ -215,9 +210,8 @@
       </div>
     </div>
 
-    <div class="friends-container" id="friends-container">
+    <div class="friends-container">
 
-      <!-- Auth gate -->
       <div class="auth-gate" id="auth-gate">
         <h3>Sign in to manage friends</h3>
         <p>You need an Edusphere Academy account to send friend requests and start private chats.</p>
@@ -238,7 +232,6 @@
         </form>
       </div>
 
-      <!-- App -->
       <div id="app" hidden style="flex:1; display:flex; flex-direction:column; min-height:0;">
         <div class="tabs">
           <button class="tab is-active" data-tab="friends">Friends<span class="badge" id="tab-friends-badge" hidden></span></button>
@@ -246,13 +239,11 @@
           <button class="tab" data-tab="find">Find people</button>
         </div>
 
-        <!-- Friends tab -->
-        <div class="content" id="tab-friends" style="flex:1;">
+        <div class="content" id="tab-friends">
           <div id="friend-list"></div>
           <div class="empty" id="friends-empty" hidden>You don't have any friends yet. Find someone in the "Find people" tab.</div>
         </div>
 
-        <!-- Requests tab -->
         <div class="content" id="tab-requests" hidden>
           <div class="section-title">Incoming</div>
           <div id="incoming-list"></div>
@@ -263,7 +254,6 @@
           <div class="empty" id="outgoing-empty">No sent requests.</div>
         </div>
 
-        <!-- Find people tab -->
         <div class="content" id="tab-find" hidden>
           <div class="search-wrap">
             <input type="text" class="input" id="search-input" placeholder="Search by display name..." autocomplete="off">
@@ -272,7 +262,6 @@
           <div class="empty" id="search-hint">Type a name to search for people.</div>
         </div>
 
-        <!-- DM view -->
         <div class="content" id="dm-view" hidden>
           <div class="dm-header">
             <button class="dm-back" id="dm-back" aria-label="Back to friends">&larr;</button>
@@ -291,14 +280,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script>
-    // ============ SETTINGS ============
     const SUPA_URL = 'https://yerxoikcfeulgnrdjkyc.supabase.co';
     const SUPA_KEY = 'sb_publishable_QX-XZw_wiRj_u0NXHGRkOA_Pq7rGK-p';
-    // ==================================
 
     const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-
     const $ = (id) => document.getElementById(id);
+
     const gate = $('auth-gate');
     const app = $('app');
     const authForm = $('auth-form');
@@ -308,19 +295,16 @@
     const authSubmit = $('auth-submit');
     const authSwitch = $('auth-switch');
 
-    let me = null;          // { id, display_name }
-    let myProfile = null;
-    let friends = [];       // [{ friendship_id, user_id, display_name }]
-    let incoming = [];      // [{ friendship_id, user_id, display_name }]
+    let me = null;
+    let friends = [];
+    let incoming = [];
     let outgoing = [];
-    let unreadByUser = {};  // user_id -> count
-    let activeChat = null;  // { user_id, display_name, channel }
+    let unreadByUser = {};
+    let activeChat = null;
     let inboxChannel = null;
     let friendsChannel = null;
-
     let authMode = 'signin';
 
-    // ---------- Auth ----------
     authSwitch.addEventListener('click', () => {
       authMode = authMode === 'signin' ? 'signup' : 'signin';
       authSwitch.textContent = authMode === 'signin' ? 'Create an account' : 'Back to sign in';
@@ -373,10 +357,10 @@
     });
 
     function shutdown() {
-      me = null; myProfile = null;
+      me = null;
       friends = []; incoming = []; outgoing = [];
       unreadByUser = {};
-      if (activeChat) { try { activeChat.channel.unsubscribe(); } catch (_) {} activeChat = null; }
+      if (activeChat) { try { activeChat = null; } catch (_) {} }
       if (inboxChannel) { try { inboxChannel.unsubscribe(); } catch (_) {} inboxChannel = null; }
       if (friendsChannel) { try { friendsChannel.unsubscribe(); } catch (_) {} friendsChannel = null; }
       app.hidden = true;
@@ -385,18 +369,17 @@
 
     async function bootFor(user) {
       me = { id: user.id };
-      gate.hidden = true;
-      app.hidden = false;
 
-      // Ensure profile exists (for pre-existing users)
       let { data: prof } = await sb.from('profiles').select('*').eq('id', me.id).maybeSingle();
       if (!prof) {
         const base = (user.email || 'user').split('@')[0];
         const { data: created } = await sb.from('profiles').insert({ id: me.id, display_name: base }).select().maybeSingle();
         prof = created;
       }
-      myProfile = prof;
       me.display_name = prof ? prof.display_name : (user.email || 'you');
+
+      gate.hidden = true;
+      app.hidden = false;
 
       await Promise.all([loadFriends(), loadRequests(), loadUnread()]);
       subscribeInbox();
@@ -404,7 +387,6 @@
       switchTab('friends');
     }
 
-    // ---------- Data ----------
     async function loadFriends() {
       const { data: rows } = await sb.from('friendships')
         .select('id, requester_id, addressee_id, status')
@@ -456,7 +438,6 @@
       return map;
     }
 
-    // ---------- Realtime ----------
     function subscribeInbox() {
       inboxChannel = sb.channel('inbox-' + me.id);
       inboxChannel.on('postgres_changes',
@@ -465,7 +446,7 @@
           const msg = payload.new;
           if (!msg) return;
           if (activeChat && activeChat.user_id === msg.sender_id) {
-            appendMessage(msg, false);
+            appendMessage(msg, true);
             markRead(activeChat.user_id);
           } else {
             unreadByUser[msg.sender_id] = (unreadByUser[msg.sender_id] || 0) + 1;
@@ -483,7 +464,6 @@
       ).subscribe();
     }
 
-    // ---------- Rendering ----------
     function renderFriends() {
       const list = $('friend-list');
       list.innerHTML = '';
@@ -518,12 +498,12 @@
           <span class="avatar">${escapeHtml(r.display_name.slice(0, 2).toUpperCase())}</span>
           <span class="friend-info"><span class="friend-name">${escapeHtml(r.display_name)}</span></span>
           <span class="request-actions">
-            <button class="btn btn-small" data-action="accept">Accept</button>
-            <button class="btn btn-small btn-ghost" data-action="decline">Decline</button>
+            <button class="btn btn-small" data-act="accept">Accept</button>
+            <button class="btn btn-small btn-ghost" data-act="decline">Decline</button>
           </span>
         `;
-        row.querySelector('[data-action="accept"]').addEventListener('click', () => respondRequest(r.friendship_id, 'accepted'));
-        row.querySelector('[data-action="decline"]').addEventListener('click', () => respondRequest(r.friendship_id, 'declined'));
+        row.querySelector('[data-act="accept"]').addEventListener('click', () => respondRequest(r.friendship_id, 'accepted'));
+        row.querySelector('[data-act="decline"]').addEventListener('click', () => removeFriendship(r.friendship_id));
         incList.appendChild(row);
       });
       $('incoming-empty').hidden = incoming.length > 0;
@@ -536,23 +516,18 @@
         row.innerHTML = `
           <span class="avatar">${escapeHtml(r.display_name.slice(0, 2).toUpperCase())}</span>
           <span class="friend-info"><span class="friend-name">${escapeHtml(r.display_name)}</span></span>
-          <button class="btn btn-small btn-ghost" data-action="cancel">Cancel</button>
+          <button class="btn btn-small btn-ghost" data-act="cancel">Cancel</button>
         `;
-        row.querySelector('[data-action="cancel"]').addEventListener('click', () => removeFriendship(r.friendship_id));
+        row.querySelector('[data-act="cancel"]').addEventListener('click', () => removeFriendship(r.friendship_id));
         outList.appendChild(row);
       });
       $('outgoing-empty').hidden = outgoing.length > 0;
 
-      updateBadges();
-    }
-
-    function updateBadges() {
       const reqBadge = $('tab-requests-badge');
       reqBadge.hidden = incoming.length === 0;
       reqBadge.textContent = incoming.length;
     }
 
-    // ---------- Tabs ----------
     document.querySelectorAll('.tab').forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
@@ -563,20 +538,16 @@
         $('tab-' + t).hidden = (t !== name);
       });
       $('dm-view').hidden = true;
+      activeChat = null;
       if (name === 'requests') { loadRequests(); }
     }
 
-    // ---------- Requests ----------
     async function respondRequest(id, status) {
-      if (status === 'declined') {
-        await removeFriendship(id);
-      } else {
-        const { error } = await sb.from('friendships')
-          .update({ status: 'accepted', updated_at: new Date().toISOString() })
-          .eq('id', id);
-        if (error) alert(error.message);
-        await Promise.all([loadFriends(), loadRequests()]);
-      }
+      const { error } = await sb.from('friendships')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) alert(error.message);
+      await Promise.all([loadFriends(), loadRequests()]);
     }
 
     async function removeFriendship(id) {
@@ -585,7 +556,6 @@
       await Promise.all([loadFriends(), loadRequests()]);
     }
 
-    // ---------- Search ----------
     let searchTimer = null;
     $('search-input').addEventListener('input', (e) => {
       clearTimeout(searchTimer);
@@ -646,9 +616,8 @@
       if (q) runSearch(q);
     }
 
-    // ---------- Chat ----------
     async function openChat(friend) {
-      activeChat = { user_id: friend.user_id, display_name: friend.display_name, channel: null };
+      activeChat = { user_id: friend.user_id, display_name: friend.display_name };
       $('tab-friends').hidden = true;
       $('tab-requests').hidden = true;
       $('tab-find').hidden = true;
@@ -656,7 +625,6 @@
       $('dm-title').textContent = friend.display_name;
       $('dm-feed').innerHTML = '';
 
-      // Load history (last 100)
       const { data: msgs } = await sb.from('private_messages')
         .select('*')
         .or(`and(sender_id.eq.${me.id},recipient_id.eq.${friend.user_id}),and(sender_id.eq.${friend.user_id},recipient_id.eq.${me.id})`)
@@ -666,16 +634,14 @@
       (msgs || []).forEach(m => appendMessage(m, false));
       $('dm-feed').scrollTop = $('dm-feed').scrollHeight;
 
-      // Mark unread as read
       await markRead(friend.user_id);
-
-      // Realtime for new messages from this friend only
-      // (inboxChannel already handles appending if this chat is active)
     }
 
     async function markRead(friendId) {
-      delete unreadByUser[friendId];
-      renderFriends();
+      if (unreadByUser[friendId]) {
+        delete unreadByUser[friendId];
+        renderFriends();
+      }
       await sb.from('private_messages')
         .update({ read_at: new Date().toISOString() })
         .eq('recipient_id', me.id)
@@ -697,7 +663,6 @@
 
     $('dm-back').addEventListener('click', () => {
       activeChat = null;
-      $('dm-view').hidden = true;
       switchTab('friends');
     });
 
@@ -717,7 +682,6 @@
       appendMessage(data, true);
     });
 
-    // ---------- Helpers ----------
     function escapeHtml(str) {
       const d = document.createElement('div');
       d.textContent = String(str);
