@@ -10090,7 +10090,7 @@ var Ns = class {
     crowdSwell = 0;
     resumeOnVisible = !1;
     params = new Map;
-    samples = new Ns(`/reelleague/h/assets/audio/`,Ds);
+    samples = new Ns(`/assets/audio/`,Ds);
     arena = null;
     crowdOn = !0;
     ambience = null;
@@ -52388,7 +52388,7 @@ function QI(e, t, n) {
     )
 }
 function $I() {
-    let e = `/reelleague/h/`;
+    let e = `/`;
     return `${e.endsWith(`/`) ? e : `${e}/`}assets/`
 }
 function eL(e, t) {
@@ -54553,7 +54553,7 @@ void main() {
             t = !1
         }
           , r = typeof document < `u`
-          , i = r ? new kE().load(`/reelleague/h/assets/skies/${Fz}`, n, void 0, n) : new VC(new Uint8Array(4),1,1);
+          , i = r ? new kE().load(`/assets/skies/${Fz}`, n, void 0, n) : new VC(new Uint8Array(4),1,1);
         r || n(),
         i.colorSpace = Hy,
         i.anisotropy = 4;
@@ -54897,7 +54897,7 @@ var cB = class {
 }
   , lB = `modulepreload`
   , uB = function(e) {
-    return `/reelleague/h/` + e
+    return `/` + e
 }
   , dB = {}
   , fB = function(e) {
@@ -56718,7 +56718,7 @@ vPlateWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
             imageOrientation: `flipY`,
             premultiplyAlpha: `none`,
             colorSpaceConversion: `none`
-        }).load(`/reelleague/h/assets/skies/${this.file}`, n => {
+        }).load(`/assets/skies/${this.file}`, n => {
             if (e !== this.generation) {
                 n.close();
                 return
@@ -57068,7 +57068,7 @@ function OH(e) {
           , r = () => {
             n.ready = !0
         }
-          , i = new kE().load(`/reelleague/h/assets/skies/${t.file}`, r, void 0, r);
+          , i = new kE().load(`/assets/skies/${t.file}`, r, void 0, r);
         return i.colorSpace = Hy,
         i.wrapS = vv,
         i.wrapT = vv,
@@ -67943,7 +67943,7 @@ function IZ(e, t, n=!0) {
     if (t.image) {
         let e = t.image;
         d++,
-        u = new kE().load(`/reelleague/h/assets/skies/${e.file}`, f, void 0, f),
+        u = new kE().load(`/assets/skies/${e.file}`, f, void 0, f),
         u.colorSpace = Hy,
         u.wrapS = vv,
         u.anisotropy = 4;
@@ -68006,7 +68006,7 @@ function IZ(e, t, n=!0) {
       , h = !1;
     if (t.band) {
         let e = t.band
-          , n = `/reelleague/h/assets/skies/${e.file}`
+          , n = `/assets/skies/${e.file}`
           , r = t.moon ? gZ(t.moon.dir) : p
           , i = e.tint ?? [1, 1, 1]
           , a = {
@@ -71433,11 +71433,11 @@ var C1 = class {
         window.setTimeout( () => i.remove(), h1)
     }
 }
-  , w1 = `/reelleague/h/assets/1v1-lqIUvaU-.webp`
-  , T1 = `/reelleague/h/assets/2v2-BR0yuMmi.webp`
-  , E1 = `/reelleague/h/assets/3v3-DWsfY6lI.webp`
-  , D1 = `/reelleague/h/assets/custom-Cao_IbE-.webp`
-  , O1 = `/reelleague/h/assets/freeplay-CnfqB_Be.webp`
+  , w1 = `/assets/1v1-lqIUvaU-.webp`
+  , T1 = `/assets/2v2-BR0yuMmi.webp`
+  , E1 = `/assets/3v3-DWsfY6lI.webp`
+  , D1 = `/assets/custom-Cao_IbE-.webp`
+  , O1 = `/assets/freeplay-CnfqB_Be.webp`
   , k1 = [{
     key: `score`,
     label: `Score`,
@@ -75784,7 +75784,7 @@ Z.setQuality(hv() ? mv() : uv),
 document.documentElement.dataset.gfx = Z.graphicsQuality;
 var a4 = new z_(n4)
   , o4 = new Gs
-  , s4 = new $s(`/reelleague/h/assets/audio/music/`);
+  , s4 = new $s(`/assets/audio/music/`);
 s4.setVolume(o4.currentVolume),
 i4.has(`mute`) && (o4.muteThisPage(),
 s4.setVolume(0));
@@ -75806,7 +75806,7 @@ var Q = null
   , S4 = new c1(r4)
   , C4 = new V$({
     url: z$({
-        BASE_URL: `/reelleague/h/`,
+        BASE_URL: `/`,
         DEV: !1,
         MODE: `production`,
         PROD: !0,
